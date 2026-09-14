@@ -19,6 +19,7 @@
     "@astrojs/react": "^6.0.0",
     "@azydeco/emdash-plugin-custom-404": "workspace:*",
     "@emdash-cms/cloudflare": "^0.37.0",
+    "@types/node": "^26.5.1",
     "astro": "catalog:",
     "emdash": "catalog:",
     "react": "catalog:",
