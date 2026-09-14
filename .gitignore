@@ -133,6 +133,9 @@ CLAUDE.md
 skills-lock.json
 .scratch/
 docs/agents/
+**/docs/adr/*
+# CONTEXT*.md
+# **/CONTEXT*.md
 
 # yarn v3
 .pnp.*
