@@ -1,0 +1,57 @@
+{
+	"cSpell.words": [
+		"astro",
+		"astrojs",
+		"azydeco",
+		"cloudflare",
+		"colors",
+		"d1",
+		"emdash",
+		"esm",
+		"media",
+		"miniflare",
+		"oxfmt",
+		"oxlint",
+		"r2",
+		"tsdown",
+		"vars",
+		"workerd",
+		"wrangler"
+	],
+	"editor.formatOnSave": true,
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+	"editor.defaultFormatter": "oxc.oxc-vscode",
+	"[typescript]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.expand": false,
+	"explorer.fileNesting.patterns": {
+		".env": "*example.env",
+		"*.ts": "$(capture).js ,$(capture).test.ts",
+		"*.tsx": "$(capture).ts, $(capture).css, $(capture).module.css",
+		"*.astro": "$(capture).ts, $(capture).css, $(capture).module.css",
+		"package.json": ".oxfmtrc.json,.oxlintrc.json,skills-lock.json, AGENTS.md ,CLAUDE.md, emdash-env.d.ts, astro.config.mjs, agents.md ,drizzle.config.ts,wrangler.jsonc, vitest.config.*,worker-configuration.d.ts ,.nvmrc , components.json,.vscodeignore,.markdownlint.yml, tailwind.config.ts,wrangler.toml,.eslintrc.cjs,cspell.json,*.env.d.ts ,*next.config.js ,.prettierrc.json , typedoc.json, typedoc.*.json,.eslintrc.js,babel.config.json, .gitattributes,next-env.d.ts,rollup.config.*s ,rollup.dev.config.*s ,turbo.json, .eslintrc.json,.prettierignore,.releaserc , .node-version ,babel.config.*s, .stylelintrc.*,.lintstagedrc.js, postcss.config.* ,next.config.js, readme.*, package-lock.json, *.code-workspace, .npmrc,  pnpm-workspace.*, pnpm-lock.*,.pnpm-debug.log, .gitignore, vite.config.*, tsconfig.json,cypress.json, jest.config.js, .env*, LICENSE, CHANGELOG.md, LICENSE.md, README.md"
+	},
+	"git-graph.dialog.merge.noFastForward": false,
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	}
+}

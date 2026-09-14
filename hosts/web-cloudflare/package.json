@@ -1,0 +1,31 @@
+{
+  "name": "web-cloudflare",
+  "version": "0.0.3",
+  "private": true,
+  "type": "module",
+  "emdash": {
+    "label": "Starter",
+    "seed": "seed/seed.json"
+  },
+  "scripts": {
+    "dev": "X_LOCAL_OBSERVABILITY=false astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.0.0",
+    "@astrojs/react": "^6.0.0",
+    "@emdash-cms/cloudflare": "^0.37.0",
+    "astro": "catalog:",
+    "emdash": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.7",
+    "@cloudflare/workers-types": "^5.20260820.1",
+    "wrangler": "^4.124.0"
+  }
+}
