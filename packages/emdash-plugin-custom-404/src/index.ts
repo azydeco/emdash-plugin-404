@@ -25,6 +25,11 @@ export function custom404Plugin(): PluginDescriptor {
 		adminEntry: ADMIN_ENTRY,
 		adminPages: ADMIN_PAGES,
 		componentsEntry: COMPONENTS_ENTRY,
+		/**
+		 * Documentation only. The runtime enforces capabilities for standard
+		 * plugins; this native plugin's `verify-url` route uses plain `fetch`.
+		 */
+		capabilities: ["network:request"],
 	};
 }
 

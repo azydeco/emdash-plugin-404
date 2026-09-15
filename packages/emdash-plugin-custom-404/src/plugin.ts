@@ -1,6 +1,6 @@
 import { definePlugin } from "emdash";
 import { ADMIN_ENTRY, ADMIN_PAGES, PLUGIN_ID, PLUGIN_VERSION } from "./constants";
-import { configRoute, saveRoute } from "./routes";
+import { configRoute, saveRoute, verifyUrlRoute } from "./routes";
 
 /**
  * Runtime entry. EmDash imports the descriptor's `entrypoint` at request time
@@ -16,6 +16,7 @@ export function createPlugin(_options: Record<string, unknown> = {}) {
 		routes: {
 			config: configRoute,
 			save: saveRoute,
+			"verify-url": verifyUrlRoute,
 		},
 		admin: {
 			entry: ADMIN_ENTRY,

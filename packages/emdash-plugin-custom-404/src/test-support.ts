@@ -1,6 +1,10 @@
 import type { KVAccess, RouteContext } from "emdash";
+import type { FetchLike } from "./verify-url";
 
-/** In-memory `KVAccess` for tests. The KV store is the only boundary the routes touch. */
+/**
+ * In-memory `KVAccess` for tests. KV and outbound `fetch` (see `fakeFetch`)
+ * are the only boundaries the routes touch.
+ */
 export function fakeKv(initial: Record<string, unknown> = {}): KVAccess {
 	const store = new Map<string, unknown>(Object.entries(initial));
 	return {
@@ -37,4 +41,37 @@ export function routeContext<TInput>(opts: {
 		request: new Request("https://internal/route", { method: opts.method }),
 	};
 	return partial as RouteContext<TInput>;
+}
+
+export type FetchCall = {
+	url: string;
+	method: string;
+	headers: Headers;
+	signal: AbortSignal | null | undefined;
+};
+
+/**
+ * A fake `fetch` that answers each call from a queue of responses and records
+ * what it was asked. A queued function receives the call, so a test can
+ * inspect the abort signal or fail on demand. Running out of queued
+ * responses is a test error, not a network one.
+ */
+export function fakeFetch(
+	responses: Array<Response | ((call: FetchCall) => Response | Promise<Response>)>,
+): FetchLike & { calls: FetchCall[] } {
+	const calls: FetchCall[] = [];
+	const impl = (async (input: string | URL, init?: RequestInit) => {
+		const call: FetchCall = {
+			url: String(input),
+			method: init?.method ?? "GET",
+			headers: new Headers(init?.headers),
+			signal: init?.signal,
+		};
+		calls.push(call);
+		const next = responses.shift();
+		if (!next) throw new Error(`fakeFetch: no response queued for ${call.method} ${call.url}`);
+		return typeof next === "function" ? next(call) : next;
+	}) as FetchLike & { calls: FetchCall[] };
+	impl.calls = calls;
+	return impl;
 }

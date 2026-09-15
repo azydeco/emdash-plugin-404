@@ -1,5 +1,7 @@
 import { PluginRouteError, type PluginRoute } from "emdash";
+import { z } from "zod";
 import { readConfig, saveInputSchema, writeConfig, type ConfigDocument } from "./config";
+import { verifyImageUrl, type FetchLike, type VerifyResult } from "./verify-url";
 
 /**
  * EmDash dispatches every HTTP method to a named route, so each handler
@@ -48,3 +50,32 @@ export const saveRoute: PluginRoute = {
 		return writeConfig(ctx.kv, saveInputSchema.parse(ctx.input));
 	},
 };
+
+export const verifyUrlInputSchema = z.object({ url: z.string() });
+
+/**
+ * `POST /_emdash/api/plugins/custom-404/verify-url`
+ *
+ * Fetches an external image URL server-side and returns the verification
+ * result. A failed verification is a normal 200 result with `ok: false` and
+ * a reason the admin can show; only a wrong method is a route error.
+ *
+ * Native plugins run in-process, so the handler uses plain `fetch` rather
+ * than `ctx.http` (which is host-allowlisted and would need every image
+ * host declared up front). The descriptor still lists `network:request` so
+ * the outbound call is documented. The factory exists so tests can inject a
+ * fake fetch; `verifyUrlRoute` is the production instance.
+ */
+export function createVerifyUrlRoute(fetchImpl: FetchLike): PluginRoute {
+	return {
+		permission: "content:edit_any",
+		input: verifyUrlInputSchema,
+		handler: async (ctx): Promise<VerifyResult> => {
+			requireMethod(ctx.request, "POST");
+			const { url } = verifyUrlInputSchema.parse(ctx.input);
+			return verifyImageUrl(url, fetchImpl);
+		},
+	};
+}
+
+export const verifyUrlRoute = createVerifyUrlRoute((input, init) => fetch(input, init));

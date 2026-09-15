@@ -30,6 +30,10 @@ describe("custom404Plugin descriptor", () => {
 		expect(descriptor.adminPages).toEqual([{ path: "/", label: "Custom 404" }]);
 	});
 
+	it("documents the outbound fetch the verify-url route makes", () => {
+		expect(descriptor.capabilities).toEqual(["network:request"]);
+	});
+
 	it("is plain data that survives JSON serialisation", () => {
 		expect(JSON.parse(JSON.stringify(descriptor))).toEqual(descriptor);
 	});
@@ -49,7 +53,7 @@ describe("createPlugin", () => {
 		expect(plugin.admin.pages).toEqual(descriptor.adminPages);
 	});
 
-	it("exposes the config and save routes", () => {
-		expect(Object.keys(plugin.routes).sort()).toEqual(["config", "save"]);
+	it("exposes the config, save and verify-url routes", () => {
+		expect(Object.keys(plugin.routes).sort()).toEqual(["config", "save", "verify-url"]);
 	});
 });
