@@ -2,8 +2,8 @@ import type { KVAccess, RouteContext } from "emdash";
 import type { FetchLike } from "./verify-url";
 
 /**
- * In-memory `KVAccess` for tests. KV and outbound `fetch` (see `fakeFetch`)
- * are the only boundaries the routes touch.
+ * In-memory `KVAccess` for tests. KV and `fetch` (see `fakeFetch`) are the
+ * only boundaries the routes and the admin API touch.
  */
 export function fakeKv(initial: Record<string, unknown> = {}): KVAccess {
 	const store = new Map<string, unknown>(Object.entries(initial));
@@ -47,6 +47,7 @@ export type FetchCall = {
 	url: string;
 	method: string;
 	headers: Headers;
+	body: BodyInit | null | undefined;
 	signal: AbortSignal | null | undefined;
 };
 
@@ -65,6 +66,7 @@ export function fakeFetch(
 			url: String(input),
 			method: init?.method ?? "GET",
 			headers: new Headers(init?.headers),
+			body: init?.body,
 			signal: init?.signal,
 		};
 		calls.push(call);
