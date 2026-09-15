@@ -49,7 +49,7 @@ describe("createPlugin", () => {
 		expect(plugin.admin.pages).toEqual(descriptor.adminPages);
 	});
 
-	it("has no routes yet", () => {
-		expect(plugin.routes).toEqual({});
+	it("exposes the config and save routes", () => {
+		expect(Object.keys(plugin.routes).sort()).toEqual(["config", "save"]);
 	});
 });
