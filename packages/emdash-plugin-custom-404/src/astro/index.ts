@@ -6,3 +6,4 @@
 export const blockComponents = {};
 
 export { default as Custom404 } from "./Custom404.astro";
+export { markNotFound } from "../not-found-response";

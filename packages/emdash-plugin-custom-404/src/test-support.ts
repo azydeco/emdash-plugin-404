@@ -1,9 +1,11 @@
 import type { KVAccess, RouteContext, VersionedValue } from "emdash";
+import type { PublicPluginApiRouteHandler } from "emdash/plugin-utils";
 import type { FetchLike } from "./verify-url";
 
 /**
- * In-memory `KVAccess` for tests. KV and `fetch` (see `fakeFetch`) are the
- * only boundaries the routes and the admin API touch.
+ * In-memory `KVAccess` for tests. KV, `fetch` (see `fakeFetch`) and the
+ * host's public route dispatcher (see `fakeDispatch`) are the only
+ * boundaries the routes, the admin API and the 404 component touch.
  */
 export function fakeKv(initial: Record<string, unknown> = {}): KVAccess {
 	const store = new Map<string, unknown>(Object.entries(initial));
@@ -100,6 +102,24 @@ export function fakeFetch(
 		if (!next) throw new Error(`fakeFetch: no response queued for ${call.method} ${call.url}`);
 		return typeof next === "function" ? next(call) : next;
 	}) as FetchLike & { calls: FetchCall[] };
+	impl.calls = calls;
+	return impl;
+}
+
+export type DispatchResult = Awaited<ReturnType<PublicPluginApiRouteHandler>>;
+
+export type DispatchCall = { pluginId: string; method: string; path: string; request: Request };
+
+/**
+ * A fake host route dispatcher that answers every call with one fixed
+ * result and records what it was asked.
+ */
+export function fakeDispatch(result: DispatchResult): PublicPluginApiRouteHandler & { calls: DispatchCall[] } {
+	const calls: DispatchCall[] = [];
+	const impl = (async (pluginId: string, method: string, path: string, request: Request) => {
+		calls.push({ pluginId, method, path, request });
+		return result;
+	}) as PublicPluginApiRouteHandler & { calls: DispatchCall[] };
 	impl.calls = calls;
 	return impl;
 }

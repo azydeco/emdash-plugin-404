@@ -1,5 +1,5 @@
 import { definePlugin } from "emdash";
-import { ADMIN_ENTRY, ADMIN_PAGES, PLUGIN_ID, PLUGIN_VERSION } from "./constants";
+import { ADMIN_ENTRY, ADMIN_PAGES, CONFIG_ROUTE, PLUGIN_ID, PLUGIN_VERSION } from "./constants";
 import { configRoute, saveRoute, verifyUrlRoute } from "./routes";
 
 /**
@@ -14,7 +14,7 @@ export function createPlugin(_options: Record<string, unknown> = {}) {
 		version: PLUGIN_VERSION,
 		hooks: {},
 		routes: {
-			config: configRoute,
+			[CONFIG_ROUTE]: configRoute,
 			save: saveRoute,
 			"verify-url": verifyUrlRoute,
 		},

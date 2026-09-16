@@ -1,9 +1,102 @@
 ---
 /**
- * Placeholder. Issue 05 replaces this with the real component that sets the
- * 404 status and headers, reads the config document, and renders the
- * configured page or the fallback slot.
+ * The site drops this into its `404.astro`, wrapping its own 404 markup in
+ * the default slot as the fallback. The response is a genuine 404 with the
+ * fixed SEO and caching headers whether or not the plugin is enabled; only
+ * the body changes.
+ *
+ * The site's `404.astro` must also call `markNotFound(Astro.response)` in
+ * its own frontmatter. Astro copies the response headers once the page's
+ * frontmatter has run and streams the rest, so by the time this component's
+ * frontmatter runs the headers below are already sent; the call here only
+ * takes effect when the page is not streamed.
+ *
+ * The config is read by in-process dispatch to the plugin's public `config`
+ * route (see `loadCustom404`), never by HTTP.
+ *
+ * Never import `emdash/middleware` here: it pulls in `astro:` virtual
+ * modules that break config evaluation.
  */
+import { getPublicPluginApiRouteHandler } from "emdash/plugin-utils";
+import { Image } from "emdash/ui";
+import { markNotFound } from "../not-found-response";
+import { loadCustom404 } from "../page-model";
+
+markNotFound(Astro.response);
+
+const page = await loadCustom404(getPublicPluginApiRouteHandler(Astro.locals));
 ---
 
-<slot />
+{
+	page ? (
+		<div class={`ec404 ec404--${page.placement}`}>
+			{page.image && (
+				<figure class="ec404-media">
+					<Image image={page.image.value} alt={page.image.alt} />
+				</figure>
+			)}
+			<div class="ec404-text">
+				<h1 class="ec404-headline">{page.headline}</h1>
+				{page.paragraphs.map((paragraph) => <p class="ec404-body">{paragraph}</p>)}
+				{page.cta && (
+					<a class="ec404-cta" href={page.cta.href}>
+						{page.cta.label}
+					</a>
+				)}
+			</div>
+		</div>
+	) : (
+		<slot />
+	)
+}
+
+<style>
+	/*
+	 * Layout only. Colours and fonts are inherited from the site. The
+	 * `ec404-` class names are the documented override surface; Astro scopes
+	 * these rules with zero specificity, so a site's own rules win.
+	 */
+	.ec404 {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.ec404--below {
+		flex-direction: column-reverse;
+	}
+
+	.ec404--left {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.ec404--right {
+		flex-direction: row-reverse;
+		align-items: flex-start;
+	}
+
+	.ec404-media {
+		margin: 0;
+		flex: 0 1 auto;
+		max-width: 24rem;
+	}
+
+	.ec404-media :global(img) {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+
+	.ec404-text {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	@media (max-width: 639px) {
+		.ec404--left,
+		.ec404--right {
+			flex-direction: column;
+		}
+	}
+</style>
