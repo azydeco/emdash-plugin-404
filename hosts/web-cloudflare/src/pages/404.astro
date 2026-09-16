@@ -1,9 +1,20 @@
 ---
+import {
+	Custom404,
+	markNotFound,
+} from "@azydeco/emdash-plugin-custom-404/astro";
 import Base from "../layouts/Base.astro";
+
+// Page-level, not only inside the component: under streaming Astro sends the
+// response headers once this frontmatter has run, before the component's
+// frontmatter can set them. See the docblock in Custom404.astro.
+markNotFound(Astro.response);
 ---
 
 <Base title="Not Found">
-	<h1>Page not found</h1>
-	<p>The page you're looking for doesn't exist.</p>
-	<a href="/">Go home</a>
+	<Custom404>
+		<h1>Page not found</h1>
+		<p>The page you're looking for doesn't exist.</p>
+		<a href="/">Go home</a>
+	</Custom404>
 </Base>
