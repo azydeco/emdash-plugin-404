@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
+import { assert, describe, expect, it, vi } from "vitest";
+
 import { fakeFetch, type FetchCall } from "./test-support";
 import { verifyImageUrl, VERIFY_TIMEOUT_MS } from "./verify-url";
 
@@ -9,7 +10,8 @@ import { verifyImageUrl, VERIFY_TIMEOUT_MS } from "./verify-url";
  * empty `url`).
  */
 function response(status: number, contentType?: string, finalUrl?: string): Response {
-	const headers: Record<string, string> = contentType === undefined ? {} : { "content-type": contentType };
+	const headers: Record<string, string> =
+		contentType === undefined ? {} : { "content-type": contentType };
 	const body = status === 204 || status === 304 ? null : new Uint8Array([0]);
 	const res = new Response(body, { status, headers });
 	if (finalUrl !== undefined) Object.defineProperty(res, "url", { value: finalUrl });
@@ -50,7 +52,8 @@ describe("verifyImageUrl: HEAD path", () => {
 		expect(result).toMatchObject({ ok: true, contentType: "image/png" });
 		expect(fetch.calls).toHaveLength(1);
 		expect(fetch.calls[0]).toMatchObject({ url: IMAGE_URL, method: "HEAD" });
-		const verifiedAt = Date.parse((result as { verifiedAt: string }).verifiedAt);
+		assert(result.ok);
+		const verifiedAt = Date.parse(result.verifiedAt);
 		expect(verifiedAt).toBeGreaterThanOrEqual(before);
 		expect(verifiedAt).toBeLessThanOrEqual(Date.now());
 	});

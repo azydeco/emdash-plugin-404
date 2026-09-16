@@ -6,6 +6,23 @@
 		"suspicious": "warn",
 		"perf": "warn"
 	},
+	"rules": {
+		// The plugin compiles JSX with the automatic runtime (`jsx: "react-jsx"` in
+		// its tsconfig, React 19), so no `React` import is needed and the rule
+		// fires on every element.
+		"react/react-in-jsx-scope": "off"
+	},
+	"overrides": [
+		{
+			// Test doubles for host interfaces (`KVAccess`, `RouteContext`) are
+			// generic over the stored value and only populate the fields the code
+			// under test reads; the casts are the documented way they say so.
+			"files": ["**/test-support.ts"],
+			"rules": {
+				"typescript/no-unsafe-type-assertion": "off"
+			}
+		}
+	],
 	"options": {
 		"typeAware": true
 	},

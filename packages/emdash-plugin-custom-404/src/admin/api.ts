@@ -4,6 +4,7 @@
  * is injected so tests drive it without a browser or a host.
  */
 import { apiFetch, parseApiResponse } from "emdash/plugin-utils";
+
 import type { ConfigDocument, SaveInput } from "../config";
 import { PLUGIN_ID } from "../constants";
 import type { FetchLike, VerifyResult } from "../verify-url";
@@ -28,7 +29,8 @@ const ROUTE_BASE = `/_emdash/api/plugins/${PLUGIN_ID}`;
 
 /** Build the API over a fetch. Tests pass a fake; `adminApi` is the browser instance. */
 export function createAdminApi(fetchImpl: FetchLike): AdminApi {
-	const call = <T>(route: string, init?: RequestInit) => request<T>(fetchImpl, `${ROUTE_BASE}/${route}`, init);
+	const call = <T>(route: string, init?: RequestInit) =>
+		request<T>(fetchImpl, `${ROUTE_BASE}/${route}`, init);
 	return {
 		loadConfig: () => call<ConfigDocument>("config"),
 		saveConfig: (input) => call<ConfigDocument>("save", postJson(input)),
@@ -47,7 +49,11 @@ function postJson(body: unknown): RequestInit {
 	};
 }
 
-async function request<T>(fetchImpl: FetchLike, url: string, init?: RequestInit): Promise<ApiOutcome<T>> {
+async function request<T>(
+	fetchImpl: FetchLike,
+	url: string,
+	init?: RequestInit,
+): Promise<ApiOutcome<T>> {
 	let response: Response;
 	try {
 		response = await fetchImpl(url, init);
@@ -85,7 +91,8 @@ async function classifyFailure<T>(response: Response): Promise<ApiOutcome<T>> {
 	const error = await readErrorBody(response);
 	const message = error?.message ?? `The server answered ${response.status}`;
 	if (response.status === 401) return { kind: "unauthenticated", message };
-	if (response.status === 403 && error?.code !== "CSRF_REJECTED") return { kind: "forbidden", message };
+	if (response.status === 403 && error?.code !== "CSRF_REJECTED")
+		return { kind: "forbidden", message };
 	if (response.status === 400 && error?.code === "VALIDATION_ERROR") {
 		return { kind: "validation", message, fields: fieldErrorsFromDetails(error.details) };
 	}
@@ -98,9 +105,13 @@ async function readErrorBody(response: Response): Promise<ErrorBody | null> {
 	try {
 		const body: unknown = await response.json();
 		if (typeof body !== "object" || body === null || !("error" in body)) return null;
-		const error = (body as { error: unknown }).error;
+		const error = body.error;
 		if (typeof error !== "object" || error === null) return null;
-		const { code, message, details } = error as { code?: unknown; message?: unknown; details?: unknown };
+		const { code, message, details } = error as {
+			code?: unknown;
+			message?: unknown;
+			details?: unknown;
+		};
 		return {
 			code: typeof code === "string" ? code : undefined,
 			message: typeof message === "string" ? message : undefined,
@@ -128,12 +139,20 @@ export function fieldErrorsFromDetails(details: unknown): FieldErrors {
 	return errors;
 }
 
-function walkFormatted(node: unknown, path: string[], visit: (path: string[], message: string) => void): void {
+/** The key zod's `formatError` uses for a node's own messages. */
+const OWN_ERRORS_KEY = "_errors";
+
+function walkFormatted(
+	node: unknown,
+	path: string[],
+	visit: (path: string[], message: string) => void,
+): void {
 	if (typeof node !== "object" || node === null) return;
-	const record = node as Record<string, unknown>;
-	const own = record._errors;
+	const entries = Object.entries(node);
+	// The node's own message is visited before any child's so it wins the field.
+	const own = entries.find(([key]) => key === OWN_ERRORS_KEY)?.[1];
 	if (Array.isArray(own) && typeof own[0] === "string") visit(path, own[0]);
-	for (const [key, child] of Object.entries(record)) {
-		if (key !== "_errors") walkFormatted(child, [...path, key], visit);
+	for (const [key, child] of entries) {
+		if (key !== OWN_ERRORS_KEY) walkFormatted(child, [...path, key], visit);
 	}
 }

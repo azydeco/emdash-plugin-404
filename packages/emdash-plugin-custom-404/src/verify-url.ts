@@ -53,7 +53,8 @@ export async function verifyImageUrl(
 	const timeoutMs = options.timeoutMs ?? VERIFY_TIMEOUT_MS;
 	const controller = new AbortController();
 	const timer = setTimeout(() => controller.abort(), timeoutMs);
-	const send = (init: RequestInit) => request(fetchImpl, parsed.url, init, controller.signal, timeoutMs);
+	const send = (init: RequestInit) =>
+		request(fetchImpl, parsed.url, init, controller.signal, timeoutMs);
 
 	try {
 		const head = await send({ method: "HEAD" });
@@ -136,5 +137,5 @@ function judge(response: Response, requested: URL): VerifyResult {
 
 /** `image/svg+xml; charset=utf-8` -> `image/svg+xml`. */
 function mediaType(header: string): string {
-	return header.split(";", 1)[0]!.trim().toLowerCase();
+	return header.split(";", 1)[0].trim().toLowerCase();
 }

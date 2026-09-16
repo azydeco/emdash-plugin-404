@@ -9,6 +9,7 @@
  */
 import { MediaPickerModal, type MediaItem } from "@emdash-cms/admin";
 import { useEffect, useId, useState, type ReactNode } from "react";
+
 import { LIMITS, NEVER_SAVED, placementSchema } from "../config";
 import { adminApi, type ApiOutcome } from "./api";
 import {
@@ -46,7 +47,8 @@ export function Custom404Admin() {
 
 	useEffect(() => {
 		let cancelled = false;
-		adminApi.loadConfig().then((result) => {
+		// `loadConfig` never rejects: every failure comes back as an outcome.
+		void adminApi.loadConfig().then((result) => {
 			if (cancelled) return;
 			if (result.kind === "ok") {
 				setForm(formFromConfig(result.data));
@@ -134,7 +136,12 @@ export function Custom404Admin() {
 			<header className="flex flex-wrap items-center justify-between gap-3">
 				<h1 className="text-2xl font-semibold leading-tight">Custom 404</h1>
 				<div className="flex items-center gap-2">
-					<a className={secondaryButton} href={PUBLIC_404_PATH} target="_blank" rel="noopener noreferrer">
+					<a
+						className={secondaryButton}
+						href={PUBLIC_404_PATH}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						View 404 page
 					</a>
 					<button
@@ -171,16 +178,15 @@ export function Custom404Admin() {
 					}}
 				>
 					{notice && (
-						<p
-							role="status"
+						<output
 							className={
 								notice.tone === "success"
-									? "rounded-lg p-3 text-sm bg-kumo-success-tint text-kumo-success"
-									: "rounded-lg p-3 text-sm bg-kumo-danger-tint text-kumo-danger"
+									? "block rounded-lg p-3 text-sm bg-kumo-success-tint text-kumo-success"
+									: "block rounded-lg p-3 text-sm bg-kumo-danger-tint text-kumo-danger"
 							}
 						>
 							{notice.text}
-						</p>
+						</output>
 					)}
 					{errors.form && <ErrorText>{errors.form}</ErrorText>}
 
@@ -212,7 +218,9 @@ export function Custom404Admin() {
 
 					<section className={cardClass}>
 						<h2 className={sectionTitleClass}>Call to action</h2>
-						<p className={helpClass}>Optional. Set both fields or neither. Opens in the same tab.</p>
+						<p className={helpClass}>
+							Optional. Set both fields or neither. Opens in the same tab.
+						</p>
 						<TextField
 							label="CTA label"
 							value={form.ctaLabel}
@@ -239,7 +247,12 @@ export function Custom404Admin() {
 							options={imageSourceOptions}
 							onChange={(raw) => {
 								setVerifyFailure(null);
-								update({ imageSource: imageSourceSchema.parse(raw) }, "image", "externalUrl", "alt");
+								update(
+									{ imageSource: imageSourceSchema.parse(raw) },
+									"image",
+									"externalUrl",
+									"alt",
+								);
 							}}
 						/>
 
@@ -290,7 +303,9 @@ export function Custom404Admin() {
 					</section>
 
 					<p className={helpClass}>
-						{updatedAt === NEVER_SAVED ? "Never saved." : `Last saved ${formatTimestamp(updatedAt)}.`}
+						{updatedAt === NEVER_SAVED
+							? "Never saved."
+							: `Last saved ${formatTimestamp(updatedAt)}.`}
 					</p>
 				</form>
 			)}
@@ -308,7 +323,10 @@ export function Custom404Admin() {
 }
 
 /** A sentence for each way a call can fail, with the permission case spelled out for authors. */
-function describeFailure(result: Exclude<ApiOutcome<unknown>, { kind: "ok" }>, action: string): string {
+function describeFailure(
+	result: Exclude<ApiOutcome<unknown>, { kind: "ok" }>,
+	action: string,
+): string {
 	switch (result.kind) {
 		case "forbidden":
 			return `You do not have permission to ${action}. Saving the 404 page needs the editor role or higher. (${result.message})`;
@@ -317,6 +335,8 @@ function describeFailure(result: Exclude<ApiOutcome<unknown>, { kind: "ok" }>, a
 		case "validation":
 		case "error":
 			return `Could not ${action}: ${result.message}`;
+		default:
+			return result satisfies never;
 	}
 }
 
@@ -358,7 +378,13 @@ function Thumbnail(props: { src: string }) {
 	);
 }
 
-function Field(props: { id: string; label: string; hint?: string; error?: string; children: ReactNode }) {
+function Field(props: {
+	id: string;
+	label: string;
+	hint?: string;
+	error?: string;
+	children: ReactNode;
+}) {
 	return (
 		<div className="space-y-1">
 			<label htmlFor={props.id} className={labelClass}>
@@ -456,7 +482,12 @@ function SelectField<T extends string>(props: {
 	);
 }
 
-function Toggle(props: { label: string; hint?: string; checked: boolean; onChange: (checked: boolean) => void }) {
+function Toggle(props: {
+	label: string;
+	hint?: string;
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+}) {
 	const id = useId();
 	return (
 		<div className="flex items-start justify-between gap-4">
@@ -494,7 +525,11 @@ function RadioGroup<T extends string>(props: {
 				{props.options.map((option) => {
 					const optionId = `${id}-${option.value}`;
 					return (
-						<label key={option.value} htmlFor={optionId} className="inline-flex items-center gap-2 cursor-pointer">
+						<label
+							key={option.value}
+							htmlFor={optionId}
+							className="inline-flex items-center gap-2 cursor-pointer"
+						>
 							<input
 								id={optionId}
 								type="radio"
@@ -525,7 +560,9 @@ function LibraryImage(props: {
 				{src && <Thumbnail src={src} />}
 				<div className="space-y-2 min-w-0">
 					{props.value && (
-						<p className="text-sm text-kumo-subtle truncate">{props.value.filename ?? props.value.id}</p>
+						<p className="text-sm text-kumo-subtle truncate">
+							{props.value.filename ?? props.value.id}
+						</p>
 					)}
 					<div className="flex flex-wrap gap-2">
 						<button type="button" className={secondaryButton} onClick={props.onChoose}>
@@ -584,16 +621,21 @@ function ExternalImage(props: {
 			</div>
 			{props.verifiedAt && <Thumbnail src={trimmed} />}
 			<p id={`${id}-status`} className={helpClass}>
-				Only https URLs. The server checks that the URL answers with an image before it can be saved.
+				Only https URLs. The server checks that the URL answers with an image before it can be
+				saved.
 			</p>
 			{props.verifiedAt ? (
-				<p className="text-sm leading-snug text-kumo-success">Verified {formatTimestamp(props.verifiedAt)}.</p>
+				<p className="text-sm leading-snug text-kumo-success">
+					Verified {formatTimestamp(props.verifiedAt)}.
+				</p>
 			) : props.failure ? (
 				<ErrorText>{props.failure}</ErrorText>
 			) : props.error ? (
 				<ErrorText>{props.error}</ErrorText>
 			) : trimmed !== "" ? (
-				<p className="text-sm leading-snug text-kumo-warning">Not verified yet. Verify before saving.</p>
+				<p className="text-sm leading-snug text-kumo-warning">
+					Not verified yet. Verify before saving.
+				</p>
 			) : null}
 		</div>
 	);

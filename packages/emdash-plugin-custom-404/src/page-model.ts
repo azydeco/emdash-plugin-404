@@ -1,4 +1,5 @@
 import type { PublicPluginApiRouteHandler } from "emdash/plugin-utils";
+
 import { configDocumentSchema, type ConfigDocument } from "./config";
 import { CONFIG_ROUTE, PLUGIN_ID } from "./constants";
 
@@ -25,7 +26,12 @@ export async function loadCustom404(
 	if (!dispatch) return null;
 	let data: unknown;
 	try {
-		const result = await dispatch(PLUGIN_ID, "GET", `/${CONFIG_ROUTE}`, new Request(`https://internal/${CONFIG_ROUTE}`));
+		const result = await dispatch(
+			PLUGIN_ID,
+			"GET",
+			`/${CONFIG_ROUTE}`,
+			new Request(`https://internal/${CONFIG_ROUTE}`),
+		);
 		if (!result.success) return null;
 		data = result.data;
 	} catch (error) {

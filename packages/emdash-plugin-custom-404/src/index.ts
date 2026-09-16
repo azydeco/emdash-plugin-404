@@ -1,4 +1,5 @@
 import type { PluginDescriptor } from "emdash";
+
 import {
 	ADMIN_ENTRY,
 	ADMIN_PAGES,

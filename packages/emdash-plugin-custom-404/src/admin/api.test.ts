@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
+
 import { defaultConfig } from "../config";
 import { fakeFetch } from "../test-support";
 import { createAdminApi, fieldErrorsFromDetails } from "./api";
@@ -28,16 +29,20 @@ describe("createAdminApi saveConfig", () => {
 		const saved = { ...defaultConfig(), updatedAt: "2026-09-15T10:00:00.000Z" };
 		const fetchImpl = fakeFetch([json({ success: true, data: saved })]);
 		const result = await createAdminApi(fetchImpl).saveConfig(defaultConfig());
-		const call = fetchImpl.calls[0]!;
+		const call = fetchImpl.calls[0];
 		expect(call).toMatchObject({ url: `${BASE}/save`, method: "POST" });
 		expect(call.headers.get("content-type")).toBe("application/json");
-		expect(JSON.parse(String(call.body))).toEqual(defaultConfig());
+		assert(typeof call.body === "string", "the body is sent as a JSON string");
+		expect(JSON.parse(call.body)).toEqual(defaultConfig());
 		expect(result).toEqual({ kind: "ok", data: saved });
 	});
 
 	it("reports a 400 VALIDATION_ERROR as validation with no fields, as the host sends it", async () => {
 		const fetchImpl = fakeFetch([
-			json({ success: false, error: { code: "VALIDATION_ERROR", message: "Invalid request body" } }, 400),
+			json(
+				{ success: false, error: { code: "VALIDATION_ERROR", message: "Invalid request body" } },
+				400,
+			),
 		]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
 		expect(result).toEqual({ kind: "validation", message: "Invalid request body", fields: {} });
@@ -66,14 +71,19 @@ describe("createAdminApi saveConfig", () => {
 	});
 
 	it("treats a 400 with another code as a plain error", async () => {
-		const fetchImpl = fakeFetch([json({ success: false, error: { code: "PLUGIN_ERROR", message: "Nope" } }, 400)]);
+		const fetchImpl = fakeFetch([
+			json({ success: false, error: { code: "PLUGIN_ERROR", message: "Nope" } }, 400),
+		]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
 		expect(result).toEqual({ kind: "error", message: "Nope" });
 	});
 
 	it("does not report the CSRF 403 as a permission problem", async () => {
 		const fetchImpl = fakeFetch([
-			json({ success: false, error: { code: "CSRF_REJECTED", message: "Missing required header" } }, 403),
+			json(
+				{ success: false, error: { code: "CSRF_REJECTED", message: "Missing required header" } },
+				403,
+			),
 		]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
 		expect(result).toEqual({ kind: "error", message: "Missing required header" });
@@ -88,13 +98,17 @@ describe("createAdminApi saveConfig", () => {
 	});
 
 	it("reports a 401 as unauthenticated", async () => {
-		const fetchImpl = fakeFetch([json({ success: false, error: { code: "UNAUTHORIZED", message: "Sign in" } }, 401)]);
+		const fetchImpl = fakeFetch([
+			json({ success: false, error: { code: "UNAUTHORIZED", message: "Sign in" } }, 401),
+		]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
 		expect(result).toEqual({ kind: "unauthenticated", message: "Sign in" });
 	});
 
 	it("reports any other failure with the server's message", async () => {
-		const fetchImpl = fakeFetch([json({ success: false, error: { code: "INTERNAL", message: "Boom" } }, 500)]);
+		const fetchImpl = fakeFetch([
+			json({ success: false, error: { code: "INTERNAL", message: "Boom" } }, 500),
+		]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
 		expect(result).toEqual({ kind: "error", message: "Boom" });
 	});
@@ -102,8 +116,7 @@ describe("createAdminApi saveConfig", () => {
 	it("falls back to a generic message when the error body is not JSON", async () => {
 		const fetchImpl = fakeFetch([new Response("<html>", { status: 502 })]);
 		const result = await createAdminApi(fetchImpl).saveConfig(input);
-		expect(result.kind).toBe("error");
-		if (result.kind === "error") expect(result.message).toMatch(/502/);
+		expect(result).toMatchObject({ kind: "error", message: expect.stringMatching(/502/) });
 	});
 
 	it("reports a network failure as an error rather than throwing", async () => {
@@ -119,11 +132,18 @@ describe("createAdminApi saveConfig", () => {
 
 describe("createAdminApi verifyUrl", () => {
 	it("POSTs the URL and returns the verification result, including a failed one", async () => {
-		const fetchImpl = fakeFetch([json({ success: true, data: { ok: false, reason: "Only https URLs are accepted" } })]);
+		const fetchImpl = fakeFetch([
+			json({ success: true, data: { ok: false, reason: "Only https URLs are accepted" } }),
+		]);
 		const result = await createAdminApi(fetchImpl).verifyUrl("http://x");
-		expect(fetchImpl.calls[0]).toMatchObject({ url: `${BASE}/verify-url`, method: "POST" });
-		expect(JSON.parse(String(fetchImpl.calls[0]!.body))).toEqual({ url: "http://x" });
-		expect(result).toEqual({ kind: "ok", data: { ok: false, reason: "Only https URLs are accepted" } });
+		const call = fetchImpl.calls[0];
+		expect(call).toMatchObject({ url: `${BASE}/verify-url`, method: "POST" });
+		assert(typeof call.body === "string", "the body is sent as a JSON string");
+		expect(JSON.parse(call.body)).toEqual({ url: "http://x" });
+		expect(result).toEqual({
+			kind: "ok",
+			data: { ok: false, reason: "Only https URLs are accepted" },
+		});
 	});
 });
 
@@ -145,6 +165,13 @@ describe("fieldErrorsFromDetails", () => {
 			alt: "Alt text is required",
 			externalUrl: "must be https",
 		});
+	});
+
+	it("lets a node's own message win over a child's when both map to one field", () => {
+		// `cta` and `cta.label` both land on `ctaLabel`; the key order here is the
+		// reverse of zod's so the walk must not depend on `_errors` coming first.
+		const details = { cta: { label: { _errors: ["from child"] }, _errors: ["from cta"] } };
+		expect(fieldErrorsFromDetails(details)).toEqual({ ctaLabel: "from cta" });
 	});
 
 	it("puts top-level and unknown-path errors on the form", () => {

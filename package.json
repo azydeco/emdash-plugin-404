@@ -3,6 +3,10 @@
 	"version": "1.0.0",
 	"private": true,
 	"description": "",
+	"keywords": [],
+	"license": "ISC",
+	"author": "",
+	"type": "module",
 	"main": "index.js",
 	"scripts": {
 		"lint": "oxlint --type-aware --deny-warnings",
@@ -10,22 +14,18 @@
 		"format": "oxfmt && prettier --write \"**/*.astro\"",
 		"format:check": "oxfmt --check && prettier --check \"**/*.astro\""
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devEngines": {
-		"packageManager": {
-			"name": "pnpm",
-			"version": "12.4.1",
-			"onFail": "download"
-		}
-	},
-	"type": "module",
 	"devDependencies": {
 		"oxfmt": "^0.68.0",
 		"oxlint": "^1.83.0",
 		"oxlint-tsgolint": "^7.0.2001",
 		"prettier": "^3.9.6",
 		"prettier-plugin-astro": "^1.0.0"
+	},
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "12.4.1",
+			"onFail": "download"
+		}
 	}
 }

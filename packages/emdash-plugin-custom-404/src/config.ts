@@ -1,5 +1,5 @@
-import { z } from "zod";
 import type { KVAccess } from "emdash";
+import { z } from "zod";
 
 /** KV key under which the whole config document is stored. */
 export const CONFIG_KEY = "config";
@@ -58,7 +58,11 @@ function isHttpsUrl(value: string): boolean {
 }
 
 const ctaFieldsSchema = z.object({
-	label: z.string().trim().min(1, "CTA label is required when a CTA URL is set").max(LIMITS.ctaLabel),
+	label: z
+		.string()
+		.trim()
+		.min(1, "CTA label is required when a CTA URL is set")
+		.max(LIMITS.ctaLabel),
 	href: z
 		.string()
 		.trim()
@@ -69,8 +73,13 @@ const ctaFieldsSchema = z.object({
 function isBlankCta(value: unknown): boolean {
 	if (typeof value !== "object" || value === null) return false;
 	const { label, href } = value as { label?: unknown; href?: unknown };
-	const blank = (v: unknown) => v === undefined || v === null || (typeof v === "string" && v.trim() === "");
-	return blank(label) && blank(href);
+	return isBlank(label) && isBlank(href);
+}
+
+function isBlank(value: unknown): boolean {
+	return (
+		value === undefined || value === null || (typeof value === "string" && value.trim() === "")
+	);
 }
 
 /** A CTA with both fields blank is the same as no CTA: it normalises to `null`. */
@@ -181,7 +190,9 @@ export function defaultConfig(): ConfigDocument {
  */
 function migrate(stored: unknown): ConfigDocument {
 	const version =
-		typeof stored === "object" && stored !== null && "version" in stored ? stored.version : undefined;
+		typeof stored === "object" && stored !== null && "version" in stored
+			? stored.version
+			: undefined;
 	switch (version) {
 		case 1:
 			return configDocumentSchema.parse(stored);

@@ -4,7 +4,9 @@ import { Image } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
 
 const slug = decodeSlug(Astro.params.slug);
-const term = slug ? await getTerm("category", slug, { includeCounts: false }) : null;
+const term = slug
+	? await getTerm("category", slug, { includeCounts: false })
+	: null;
 
 if (!term) {
 	return Astro.redirect("/404");
@@ -18,25 +20,25 @@ const { entries: posts } = await getEmDashCollection("posts", {
 
 <Base title={`${term.label} posts`} description={`Posts in ${term.label}`}>
 	<h1>{term.label}</h1>
-	<p>{posts.length} {posts.length === 1 ? "post" : "posts"}</p>
+	<p>
+		{posts.length} {posts.length === 1 ? "post" : "posts"}
+	</p>
 
-	{
-		posts.length === 0 ? (
-			<p>No posts in this category yet.</p>
-		) : (
-			<ul>
-				{posts.map((post) => (
-					<li>
-						<a href={`/posts/${post.id}`}>
-							{post.data.featured_image && (
-								<Image image={post.data.featured_image} />
-							)}
-							<h2>{post.data.title}</h2>
-						</a>
-						{post.data.excerpt && <p>{post.data.excerpt}</p>}
-					</li>
-				))}
-			</ul>
-		)
-	}
+	{posts.length === 0 ? (
+		<p>No posts in this category yet.</p>
+	) : (
+		<ul>
+			{posts.map((post) => (
+				<li>
+					<a href={`/posts/${post.id}`}>
+						{post.data.featured_image && (
+							<Image image={post.data.featured_image} />
+						)}
+						<h2>{post.data.title}</h2>
+					</a>
+					{post.data.excerpt && <p>{post.data.excerpt}</p>}
+				</li>
+			))}
+		</ul>
+	)}
 </Base>

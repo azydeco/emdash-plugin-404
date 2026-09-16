@@ -1,10 +1,13 @@
 import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
+
 import { createPlugin, custom404Plugin } from "./index";
 
-const packageJson = JSON.parse(
-	readFileSync(new URL("../package.json", import.meta.url), "utf8"),
-) as { name: string; version: string; exports: Record<string, string> };
+const packageJson = z
+	.object({ name: z.string(), version: z.string(), exports: z.record(z.string(), z.string()) })
+	.parse(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")));
 
 describe("custom404Plugin descriptor", () => {
 	const descriptor = custom404Plugin();
@@ -54,6 +57,6 @@ describe("createPlugin", () => {
 	});
 
 	it("exposes the config, save and verify-url routes", () => {
-		expect(Object.keys(plugin.routes).sort()).toEqual(["config", "save", "verify-url"]);
+		expect(new Set(Object.keys(plugin.routes))).toEqual(new Set(["config", "save", "verify-url"]));
 	});
 });

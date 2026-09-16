@@ -7,6 +7,7 @@
 import type { MediaItem } from "@emdash-cms/admin";
 import type { MediaValue } from "emdash";
 import { z } from "zod";
+
 import { placementSchema, saveInputSchema, type ConfigDocument, type SaveInput } from "../config";
 
 /** What the Image source radio offers. `none` is the form's own; the document only knows the other two. */
@@ -100,7 +101,9 @@ export function formFromConfig(doc: ConfigDocument): FormState {
 		} else {
 			const url = doc.image.value.src ?? "";
 			form.externalUrl = url;
-			form.externalVerification = doc.image.verifiedAt ? { url, verifiedAt: doc.image.verifiedAt } : null;
+			form.externalVerification = doc.image.verifiedAt
+				? { url, verifiedAt: doc.image.verifiedAt }
+				: null;
 		}
 	}
 	return form;
@@ -145,6 +148,8 @@ function candidateImage(form: FormState): SaveInput["image"] {
 				verifiedAt: currentVerification(form)?.verifiedAt,
 			};
 		}
+		default:
+			return form.imageSource satisfies never;
 	}
 }
 

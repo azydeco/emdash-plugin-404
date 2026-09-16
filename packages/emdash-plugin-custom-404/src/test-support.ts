@@ -1,5 +1,6 @@
 import type { KVAccess, RouteContext, VersionedValue } from "emdash";
 import type { PublicPluginApiRouteHandler } from "emdash/plugin-utils";
+
 import type { FetchLike } from "./verify-url";
 
 /**
@@ -24,7 +25,7 @@ export function fakeKv(initial: Record<string, unknown> = {}): KVAccess {
 		},
 		async getVersioned<T>(key: string): Promise<VersionedValue<T> | null> {
 			if (!store.has(key)) return null;
-			return { value: store.get(key) as T, revision: currentRevision(key) as string };
+			return { value: store.get(key) as T, revision: String(revisions.get(key) ?? 0) };
 		},
 		async compareAndSet(key, expectedRevision, value) {
 			if (currentRevision(key) !== expectedRevision) return { applied: false };
@@ -89,7 +90,7 @@ export function fakeFetch(
 	responses: Array<Response | ((call: FetchCall) => Response | Promise<Response>)>,
 ): FetchLike & { calls: FetchCall[] } {
 	const calls: FetchCall[] = [];
-	const impl = (async (input: string | URL, init?: RequestInit) => {
+	const impl: FetchLike = async (input, init) => {
 		const call: FetchCall = {
 			url: String(input),
 			method: init?.method ?? "GET",
@@ -101,9 +102,8 @@ export function fakeFetch(
 		const next = responses.shift();
 		if (!next) throw new Error(`fakeFetch: no response queued for ${call.method} ${call.url}`);
 		return typeof next === "function" ? next(call) : next;
-	}) as FetchLike & { calls: FetchCall[] };
-	impl.calls = calls;
-	return impl;
+	};
+	return Object.assign(impl, { calls });
 }
 
 export type DispatchResult = Awaited<ReturnType<PublicPluginApiRouteHandler>>;
@@ -114,12 +114,13 @@ export type DispatchCall = { pluginId: string; method: string; path: string; req
  * A fake host route dispatcher that answers every call with one fixed
  * result and records what it was asked.
  */
-export function fakeDispatch(result: DispatchResult): PublicPluginApiRouteHandler & { calls: DispatchCall[] } {
+export function fakeDispatch(
+	result: DispatchResult,
+): PublicPluginApiRouteHandler & { calls: DispatchCall[] } {
 	const calls: DispatchCall[] = [];
-	const impl = (async (pluginId: string, method: string, path: string, request: Request) => {
+	const impl: PublicPluginApiRouteHandler = async (pluginId, method, path, request) => {
 		calls.push({ pluginId, method, path, request });
 		return result;
-	}) as PublicPluginApiRouteHandler & { calls: DispatchCall[] };
-	impl.calls = calls;
-	return impl;
+	};
+	return Object.assign(impl, { calls });
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { markNotFound } from "./not-found-response";
 
 describe("markNotFound", () => {

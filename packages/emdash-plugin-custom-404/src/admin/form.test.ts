@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
 import type { MediaItem } from "@emdash-cms/admin";
+import { describe, expect, it } from "vitest";
+
 import { defaultConfig, type ConfigDocument } from "../config";
 import {
 	emptyForm,
@@ -183,8 +184,7 @@ describe("validateForm", () => {
 describe("prepareSave", () => {
 	it("returns the errors and no input when the form is not saveable", () => {
 		const result = prepareSave({ ...emptyForm(), enabled: true });
-		expect(result.ok).toBe(false);
-		if (!result.ok) expect(result.errors.headline).toBeDefined();
+		expect(result).toMatchObject({ ok: false, errors: { headline: expect.any(String) } });
 	});
 
 	it("builds a save input with null CTA and image from an empty form", () => {
@@ -203,22 +203,22 @@ describe("prepareSave", () => {
 
 	it("builds an external image value with its verification stamp", () => {
 		const result = prepareSave(verifiedExternalForm());
-		expect(result.ok).toBe(true);
-		if (result.ok) {
-			expect(result.input.image).toEqual({
-				source: "external",
-				value: { id: "", provider: "external", src: "https://cdn.example.com/lost.png" },
-				alt: "Lost",
-				verifiedAt: "2026-09-14T09:00:00.000Z",
-			});
-		}
+		expect(result).toMatchObject({
+			ok: true,
+			input: {
+				image: {
+					source: "external",
+					value: { id: "", provider: "external", src: "https://cdn.example.com/lost.png" },
+					alt: "Lost",
+					verifiedAt: "2026-09-14T09:00:00.000Z",
+				},
+			},
+		});
 	});
 
 	it("drops image fields when the source is none", () => {
 		const form: FormState = { ...verifiedExternalForm(), imageSource: "none" };
-		const result = prepareSave(form);
-		expect(result.ok).toBe(true);
-		if (result.ok) expect(result.input.image).toBeNull();
+		expect(prepareSave(form)).toMatchObject({ ok: true, input: { image: null } });
 	});
 });
 
@@ -296,8 +296,12 @@ describe("thumbnailUrl", () => {
 	});
 
 	it("uses src for external and previewUrl for other providers", () => {
-		expect(thumbnailUrl({ id: "", provider: "external", src: "https://e/x.png" })).toBe("https://e/x.png");
-		expect(thumbnailUrl({ id: "1", provider: "cf", previewUrl: "https://cf/x" })).toBe("https://cf/x");
+		expect(thumbnailUrl({ id: "", provider: "external", src: "https://e/x.png" })).toBe(
+			"https://e/x.png",
+		);
+		expect(thumbnailUrl({ id: "1", provider: "cf", previewUrl: "https://cf/x" })).toBe(
+			"https://cf/x",
+		);
 	});
 
 	it("returns undefined for a non-local provider with no URL", () => {

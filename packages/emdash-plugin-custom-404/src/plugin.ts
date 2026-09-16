@@ -1,4 +1,5 @@
 import { definePlugin } from "emdash";
+
 import { ADMIN_ENTRY, ADMIN_PAGES, CONFIG_ROUTE, PLUGIN_ID, PLUGIN_VERSION } from "./constants";
 import { configRoute, saveRoute, verifyUrlRoute } from "./routes";
 

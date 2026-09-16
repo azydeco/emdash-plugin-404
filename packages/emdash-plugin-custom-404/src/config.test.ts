@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { configDocumentSchema, defaultConfig, readConfig, saveInputSchema } from "./config";
 import { fakeKv } from "./test-support";
 
@@ -31,20 +32,32 @@ describe("configDocumentSchema headline rule", () => {
 	});
 
 	it("accepts a disabled document with a blank headline", () => {
-		const result = configDocumentSchema.safeParse({ ...validDocument, enabled: false, headline: "" });
+		const result = configDocumentSchema.safeParse({
+			...validDocument,
+			enabled: false,
+			headline: "",
+		});
 		expect(result.success).toBe(true);
 	});
 });
 
 describe("configDocumentSchema length limits", () => {
 	it("accepts a headline of exactly 200 characters and rejects 201", () => {
-		expect(configDocumentSchema.safeParse({ ...validDocument, headline: "h".repeat(200) }).success).toBe(true);
-		expect(configDocumentSchema.safeParse({ ...validDocument, headline: "h".repeat(201) }).success).toBe(false);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, headline: "h".repeat(200) }).success,
+		).toBe(true);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, headline: "h".repeat(201) }).success,
+		).toBe(false);
 	});
 
 	it("accepts a body of exactly 5000 characters and rejects 5001", () => {
-		expect(configDocumentSchema.safeParse({ ...validDocument, body: "b".repeat(5000) }).success).toBe(true);
-		expect(configDocumentSchema.safeParse({ ...validDocument, body: "b".repeat(5001) }).success).toBe(false);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, body: "b".repeat(5000) }).success,
+		).toBe(true);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, body: "b".repeat(5001) }).success,
+		).toBe(false);
 	});
 
 	it("accepts a CTA label of exactly 80 characters and rejects 81", () => {
@@ -123,7 +136,9 @@ describe("configDocumentSchema image rules", () => {
 	});
 
 	it("rejects a library image that carries a verification timestamp", () => {
-		expect(withImage({ ...validDocument.image, verifiedAt: externalImage.verifiedAt }).success).toBe(false);
+		expect(
+			withImage({ ...validDocument.image, verifiedAt: externalImage.verifiedAt }).success,
+		).toBe(false);
 	});
 
 	it("rejects a verification timestamp that is not an ISO datetime", () => {
@@ -133,7 +148,9 @@ describe("configDocumentSchema image rules", () => {
 
 describe("configDocumentSchema envelope", () => {
 	it("rejects an unknown placement", () => {
-		expect(configDocumentSchema.safeParse({ ...validDocument, placement: "background" }).success).toBe(false);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, placement: "background" }).success,
+		).toBe(false);
 	});
 
 	it("rejects a document with a different version", () => {
@@ -141,7 +158,9 @@ describe("configDocumentSchema envelope", () => {
 	});
 
 	it("rejects an updatedAt that is not an ISO datetime", () => {
-		expect(configDocumentSchema.safeParse({ ...validDocument, updatedAt: "last week" }).success).toBe(false);
+		expect(
+			configDocumentSchema.safeParse({ ...validDocument, updatedAt: "last week" }).success,
+		).toBe(false);
 	});
 });
 
@@ -149,7 +168,13 @@ describe("defaultConfig", () => {
 	it("is a valid, disabled document with the image above the text", () => {
 		const doc = defaultConfig();
 		expect(configDocumentSchema.safeParse(doc).success).toBe(true);
-		expect(doc).toMatchObject({ version: 1, enabled: false, cta: null, image: null, placement: "above" });
+		expect(doc).toMatchObject({
+			version: 1,
+			enabled: false,
+			cta: null,
+			image: null,
+			placement: "above",
+		});
 	});
 });
 
@@ -176,7 +201,11 @@ describe("saveInputSchema", () => {
 	});
 
 	it("drops a client-supplied version and updatedAt", () => {
-		const result = saveInputSchema.safeParse({ ...editable, version: 7, updatedAt: "2000-01-01T00:00:00.000Z" });
+		const result = saveInputSchema.safeParse({
+			...editable,
+			version: 7,
+			updatedAt: "2000-01-01T00:00:00.000Z",
+		});
 		expect(result.success).toBe(true);
 		expect(result.data).not.toHaveProperty("version");
 		expect(result.data).not.toHaveProperty("updatedAt");

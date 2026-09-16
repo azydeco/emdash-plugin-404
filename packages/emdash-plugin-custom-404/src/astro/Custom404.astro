@@ -27,28 +27,28 @@ markNotFound(Astro.response);
 const page = await loadCustom404(getPublicPluginApiRouteHandler(Astro.locals));
 ---
 
-{
-	page ? (
-		<div class={`ec404 ec404--${page.placement}`}>
-			{page.image && (
-				<figure class="ec404-media">
-					<Image image={page.image.value} alt={page.image.alt} />
-				</figure>
+{page ? (
+	<div class={`ec404 ec404--${page.placement}`}>
+		{page.image && (
+			<figure class="ec404-media">
+				<Image image={page.image.value} alt={page.image.alt} />
+			</figure>
+		)}
+		<div class="ec404-text">
+			<h1 class="ec404-headline">{page.headline}</h1>
+			{page.paragraphs.map((paragraph) => (
+				<p class="ec404-body">{paragraph}</p>
+			))}
+			{page.cta && (
+				<a class="ec404-cta" href={page.cta.href}>
+					{page.cta.label}
+				</a>
 			)}
-			<div class="ec404-text">
-				<h1 class="ec404-headline">{page.headline}</h1>
-				{page.paragraphs.map((paragraph) => <p class="ec404-body">{paragraph}</p>)}
-				{page.cta && (
-					<a class="ec404-cta" href={page.cta.href}>
-						{page.cta.label}
-					</a>
-				)}
-			</div>
 		</div>
-	) : (
-		<slot />
-	)
-}
+	</div>
+) : (
+	<slot />
+)}
 
 <style>
 	/*

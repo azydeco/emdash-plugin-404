@@ -1,6 +1,7 @@
 import { PluginRouteError } from "emdash";
 import { describe, expect, it } from "vitest";
-import { defaultConfig } from "./config";
+
+import { configDocumentSchema, defaultConfig } from "./config";
 import { createPlugin } from "./plugin";
 import { createVerifyUrlRoute } from "./routes";
 import { fakeFetch, fakeKv, routeContext } from "./test-support";
@@ -54,7 +55,7 @@ describe("save route", () => {
 
 		expect(read).toEqual(saved);
 		expect(read).toMatchObject({ ...editable, version: 1 });
-		const updatedAt = Date.parse((read as { updatedAt: string }).updatedAt);
+		const updatedAt = Date.parse(configDocumentSchema.parse(read).updatedAt);
 		expect(updatedAt).toBeGreaterThanOrEqual(before);
 		expect(updatedAt).toBeLessThanOrEqual(Date.now());
 	});
@@ -74,16 +75,24 @@ describe("verify-url route", () => {
 	});
 
 	it("accepts only an object with a string url", () => {
-		expect(verifyUrlRoute.input?.safeParse({ url: "https://cdn.example.com/a.png" }).success).toBe(true);
+		expect(verifyUrlRoute.input?.safeParse({ url: "https://cdn.example.com/a.png" }).success).toBe(
+			true,
+		);
 		expect(verifyUrlRoute.input?.safeParse({ url: 42 }).success).toBe(false);
 		expect(verifyUrlRoute.input?.safeParse({}).success).toBe(false);
 	});
 
 	it("verifies the url with the injected fetch and returns the result", async () => {
-		const fetch = fakeFetch([new Response(null, { status: 200, headers: { "content-type": "image/png" } })]);
+		const fetch = fakeFetch([
+			new Response(null, { status: 200, headers: { "content-type": "image/png" } }),
+		]);
 		const route = createVerifyUrlRoute(fetch);
 		const result = await route.handler(
-			routeContext({ method: "POST", input: { url: "https://cdn.example.com/a.png" }, kv: fakeKv() }),
+			routeContext({
+				method: "POST",
+				input: { url: "https://cdn.example.com/a.png" },
+				kv: fakeKv(),
+			}),
 		);
 		expect(result).toMatchObject({ ok: true, contentType: "image/png" });
 		expect(fetch.calls.map((c) => c.url)).toEqual(["https://cdn.example.com/a.png"]);
@@ -92,7 +101,11 @@ describe("verify-url route", () => {
 	it("returns a failed verification as a normal result, not an error", async () => {
 		const route = createVerifyUrlRoute(fakeFetch([new Response(null, { status: 404 })]));
 		const result = await route.handler(
-			routeContext({ method: "POST", input: { url: "https://cdn.example.com/a.png" }, kv: fakeKv() }),
+			routeContext({
+				method: "POST",
+				input: { url: "https://cdn.example.com/a.png" },
+				kv: fakeKv(),
+			}),
 		);
 		expect(result).toMatchObject({ ok: false });
 	});
@@ -100,7 +113,11 @@ describe("verify-url route", () => {
 	it("rejects methods other than POST with a 405 route error", async () => {
 		const route = createVerifyUrlRoute(fakeFetch([]));
 		const call = route.handler(
-			routeContext({ method: "GET", input: { url: "https://cdn.example.com/a.png" }, kv: fakeKv() }),
+			routeContext({
+				method: "GET",
+				input: { url: "https://cdn.example.com/a.png" },
+				kv: fakeKv(),
+			}),
 		);
 		await expect(call).rejects.toMatchObject({ status: 405 });
 	});
