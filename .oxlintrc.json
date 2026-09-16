@@ -10,7 +10,11 @@
 		// The plugin compiles JSX with the automatic runtime (`jsx: "react-jsx"` in
 		// its tsconfig, React 19), so no `React` import is needed and the rule
 		// fires on every element.
-		"react/react-in-jsx-scope": "off"
+		"react/react-in-jsx-scope": "off",
+		// A stylesheet has nothing to bind to; `import "./theme.css"` is the only
+		// way to pull one in for its side effect. The rule's own docs give
+		// `**/*.css` as the example allow-pattern for this case.
+		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }]
 	},
 	"overrides": [
 		{
