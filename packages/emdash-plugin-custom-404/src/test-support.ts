@@ -1,4 +1,4 @@
-import type { KVAccess, RouteContext } from "emdash";
+import type { KVAccess, RouteContext, VersionedValue } from "emdash";
 import type { FetchLike } from "./verify-url";
 
 /**
@@ -7,14 +7,40 @@ import type { FetchLike } from "./verify-url";
  */
 export function fakeKv(initial: Record<string, unknown> = {}): KVAccess {
 	const store = new Map<string, unknown>(Object.entries(initial));
+	// Revisions are per-key write counters, formatted as strings the way the host's opaque revisions are.
+	const revisions = new Map<string, number>();
+	const bump = (key: string): string => {
+		const next = (revisions.get(key) ?? 0) + 1;
+		revisions.set(key, next);
+		return String(next);
+	};
+	const currentRevision = (key: string): string | null =>
+		store.has(key) ? String(revisions.get(key) ?? 0) : null;
 	return {
 		async get<T>(key: string): Promise<T | null> {
 			return store.has(key) ? (store.get(key) as T) : null;
 		},
+		async getVersioned<T>(key: string): Promise<VersionedValue<T> | null> {
+			if (!store.has(key)) return null;
+			return { value: store.get(key) as T, revision: currentRevision(key) as string };
+		},
+		async compareAndSet(key, expectedRevision, value) {
+			if (currentRevision(key) !== expectedRevision) return { applied: false };
+			store.set(key, value);
+			return { applied: true, revision: bump(key) };
+		},
+		async compareAndDelete(key, expectedRevision) {
+			if (currentRevision(key) !== expectedRevision) return { applied: false };
+			store.delete(key);
+			revisions.delete(key);
+			return { applied: true };
+		},
 		async set(key, value) {
 			store.set(key, value);
+			bump(key);
 		},
 		async delete(key) {
+			revisions.delete(key);
 			return store.delete(key);
 		},
 		async list(prefix = "") {
