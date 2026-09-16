@@ -58,6 +58,6 @@
 	},
 	"git-graph.dialog.merge.noFastForward": false,
 	"[css]": {
-		"editor.defaultFormatter": "vscode.css-language-features"
+		"editor.defaultFormatter": "oxc.oxc-vscode"
 	}
 }
