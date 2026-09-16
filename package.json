@@ -1,20 +1,31 @@
 {
-  "name": "@azydeco/emdash-plugin-404",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.4.1",
-      "onFail": "download"
-    }
-  },
-  "type": "module"
+	"name": "azdeco-404-workspace",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"lint": "oxlint --type-aware --deny-warnings",
+		"lint:fix": "oxlint --type-aware --fix",
+		"format": "oxfmt && prettier --write \"**/*.astro\"",
+		"format:check": "oxfmt --check && prettier --check \"**/*.astro\""
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "12.4.1",
+			"onFail": "download"
+		}
+	},
+	"type": "module",
+	"devDependencies": {
+		"oxfmt": "^0.68.0",
+		"oxlint": "^1.83.0",
+		"oxlint-tsgolint": "^7.0.2001",
+		"prettier": "^3.9.6",
+		"prettier-plugin-astro": "^1.0.0"
+	}
 }

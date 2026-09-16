@@ -1,0 +1,13 @@
+{
+	"useTabs": true,
+	"experimentalSortImports": {},
+	"ignorePatterns": [
+		"**/dist/**",
+		"**/.wrangler/**",
+		"**/.astro/**",
+		"**/emdash-env.d.ts",
+		"**/worker-configuration.d.ts",
+		"hosts/web-cloudflare/seed/seed.json",
+		"**/*.md"
+	]
+}

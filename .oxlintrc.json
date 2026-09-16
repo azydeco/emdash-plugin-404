@@ -1,0 +1,22 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "vitest", "react", "jsx-a11y"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"perf": "warn"
+	},
+	"options": {
+		"typeAware": true
+	},
+	"ignorePatterns": [
+		"**/dist/**",
+		"**/.wrangler/**",
+		"**/.astro/**",
+		"**/emdash-env.d.ts",
+		"**/worker-configuration.d.ts",
+		"hosts/web-cloudflare/seed/seed.json",
+		"**/*.md",
+		"**/*.d.ts"
+	]
+}
