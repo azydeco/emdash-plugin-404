@@ -1,0 +1,4 @@
+# Format staged files (Prettier for .astro, oxfmt for the rest), then lint
+# them; a finding aborts the commit. Serial, in config order, so the linter
+# never reads a file a formatter is still rewriting.
+pnpm exec lint-staged --concurrent false

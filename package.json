@@ -12,14 +12,24 @@
 		"lint": "oxlint --type-aware --deny-warnings",
 		"lint:fix": "oxlint --type-aware --fix",
 		"format": "oxfmt && prettier --write \"**/*.astro\"",
-		"format:check": "oxfmt --check && prettier --check \"**/*.astro\""
+		"format:check": "oxfmt --check && prettier --check \"**/*.astro\"",
+		"prepare": "husky"
 	},
 	"devDependencies": {
+		"husky": "^9.1.7",
+		"lint-staged": "^17.5.1",
 		"oxfmt": "^0.68.0",
 		"oxlint": "^1.83.0",
 		"oxlint-tsgolint": "^7.0.2001",
 		"prettier": "^3.9.6",
 		"prettier-plugin-astro": "^1.0.0"
+	},
+	"lint-staged": {
+		"*.astro": "prettier --write",
+		"*": [
+			"oxfmt --no-error-on-unmatched-pattern",
+			"pnpm lint --no-error-on-unmatched-pattern"
+		]
 	},
 	"devEngines": {
 		"packageManager": {
