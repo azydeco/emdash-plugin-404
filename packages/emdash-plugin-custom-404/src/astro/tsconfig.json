@@ -1,0 +1,19 @@
+{
+	/**
+	 * The root tsconfig excludes this directory from `pnpm typecheck`: plain
+	 * `tsc` can't parse `.astro` files, and the native guide warns that some
+	 * imports here pull in `astro:` virtual modules `tsc` doesn't know either.
+	 *
+	 * This config exists only so editors resolve modules correctly while
+	 * editing files in this directory — it inherits the root's
+	 * `moduleResolution: "bundler"` (needed for `emdash`'s subpath exports,
+	 * e.g. `emdash/plugin-utils`) instead of falling back to TypeScript's
+	 * default when a file is outside every project's `include`.
+	 *
+	 * Not consumed by `tsc --noEmit` (which only reads `../../tsconfig.json`)
+	 * or by the Astro/Vite build, which don't look at nested tsconfigs.
+	 */
+	"extends": "../../tsconfig.json",
+	"include": ["**/*"],
+	"exclude": ["node_modules"]
+}
