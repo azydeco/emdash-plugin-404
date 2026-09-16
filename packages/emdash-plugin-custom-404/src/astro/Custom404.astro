@@ -28,19 +28,19 @@ const page = await loadCustom404(getPublicPluginApiRouteHandler(Astro.locals));
 ---
 
 {page ? (
-	<div class={`ec404 ec404--${page.placement}`}>
+	<div class={`custom-404-page custom-404-page--placement-${page.placement}`}>
 		{page.image && (
-			<figure class="ec404-media">
+			<figure class="custom-404-page__image">
 				<Image image={page.image.value} alt={page.image.alt} />
 			</figure>
 		)}
-		<div class="ec404-text">
-			<h1 class="ec404-headline">{page.headline}</h1>
+		<div class="custom-404-page__content">
+			<h1 class="custom-404-page__heading">{page.headline}</h1>
 			{page.paragraphs.map((paragraph) => (
-				<p class="ec404-body">{paragraph}</p>
+				<p class="custom-404-page__paragraph">{paragraph}</p>
 			))}
 			{page.cta && (
-				<a class="ec404-cta" href={page.cta.href}>
+				<a class="custom-404-page__cta" href={page.cta.href}>
 					{page.cta.label}
 				</a>
 			)}
@@ -53,50 +53,50 @@ const page = await loadCustom404(getPublicPluginApiRouteHandler(Astro.locals));
 <style>
 	/*
 	 * Layout only. Colours and fonts are inherited from the site. The
-	 * `ec404-` class names are the documented override surface; Astro scopes
-	 * these rules with zero specificity, so a site's own rules win.
+	 * `custom-404-page` class names are the documented override surface; Astro
+	 * scopes these rules with zero specificity, so a site's own rules win.
 	 */
-	.ec404 {
+	.custom-404-page {
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
+
+		&.custom-404-page--placement-below {
+			flex-direction: column-reverse;
+		}
+
+		&.custom-404-page--placement-left {
+			flex-direction: row;
+			align-items: flex-start;
+		}
+
+		&.custom-404-page--placement-right {
+			flex-direction: row-reverse;
+			align-items: flex-start;
+		}
+
+		@media (max-width: 639px) {
+			&.custom-404-page--placement-left,
+			&.custom-404-page--placement-right {
+				flex-direction: column;
+			}
+		}
 	}
 
-	.ec404--below {
-		flex-direction: column-reverse;
-	}
-
-	.ec404--left {
-		flex-direction: row;
-		align-items: flex-start;
-	}
-
-	.ec404--right {
-		flex-direction: row-reverse;
-		align-items: flex-start;
-	}
-
-	.ec404-media {
+	.custom-404-page__image {
 		margin: 0;
 		flex: 0 1 auto;
 		max-width: 24rem;
+
+		:global(img) {
+			display: block;
+			max-width: 100%;
+			height: auto;
+		}
 	}
 
-	.ec404-media :global(img) {
-		display: block;
-		max-width: 100%;
-		height: auto;
-	}
-
-	.ec404-text {
+	.custom-404-page__content {
 		flex: 1 1 0;
 		min-width: 0;
-	}
-
-	@media (max-width: 639px) {
-		.ec404--left,
-		.ec404--right {
-			flex-direction: column;
-		}
 	}
 </style>
