@@ -9,6 +9,11 @@
 		"emdash-plugin"
 	],
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/azydeco/emdash-plugin-404.git",
+		"directory": "packages/emdash-plugin-custom-404"
+	},
 	"files": [
 		"src"
 	],

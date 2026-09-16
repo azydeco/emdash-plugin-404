@@ -15,15 +15,13 @@ Peer floors: `emdash >=0.37.0`, `astro >=7.0.0`, `react` and `react-dom` `^18 ||
 
 ## Install
 
-The EmDash Marketplace and Registry accept sandboxed plugins only, so this plugin — being native — cannot be listed there. That's a limitation of native plugins, not a gap to be filled later. Two install paths work today:
+The EmDash Marketplace and Registry accept sandboxed plugins only, so this plugin — being native — cannot be listed there. That's a limitation of native plugins, not a gap to be filled later. Install it from npm:
 
 ```bash
-# From the public mirror (see "Public repository" below)
-pnpm add github:<org>/<repo>
-
-# From npm
 pnpm add @azydeco/emdash-plugin-custom-404
 ```
+
+(A `github:` reference is not supported. This package ships from a monorepo — see "Public repository" below — and a git reference would install the whole workspace at its root, not this package, and cannot resolve the `pnpm` catalog versions in its manifest. npm publish handles both, the same way `emdash-cms/emdash` publishes each of its own `@emdash-cms/plugin-*` packages.)
 
 Then register it in `astro.config.mjs`, in `plugins: []` — **never** `sandboxed: []`:
 
@@ -113,7 +111,7 @@ No `location` header — if you see one, something in the request path is still 
 
 ## Public repository
 
-The plugin is developed under `packages/emdash-plugin-custom-404` in this monorepo and mirrored by hand to a standalone GitHub repository whose root is the package, which is what makes the `github:<org>/<repo>` install above work. CI mirroring is planned once that install path has been verified once; until then, mirroring is a manual step maintainers run from this monorepo.
+The plugin is developed under `packages/emdash-plugin-custom-404` in this monorepo, [azydeco/emdash-plugin-404](https://github.com/azydeco/emdash-plugin-404), and published to npm from there with `pnpm publish`. `package.json`'s `repository.directory` field points npm's UI at the subfolder. There is no separate mirror repository and no CI publish workflow yet for v1 — publishing is a manual, maintainer-run step.
 
 ## Notes for anyone extending the plugin
 
