@@ -1,8 +1,6 @@
-# EmDash Starter Template (Cloudflare)
+# EmDash Test Site (Cloudflare)
 
-A general-purpose starting point for building sites with [EmDash](https://github.com/emdash-cms/emdash) on Cloudflare Workers. Includes posts, pages, categories, and tags with minimal styling -- designed as a base you can build on rather than a finished theme.
-
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/emdash-cms/templates/tree/main/starter-cloudflare)
+The Test site this monorepo uses to develop and exercise `packages/emdash-plugin-custom-404` against a real EmDash/Astro app. It runs locally only — it is not deployed to Cloudflare or anywhere else. Includes posts, pages, categories, and tags with minimal styling.
 
 ## What's Included
 
@@ -26,6 +24,8 @@ A general-purpose starting point for building sites with [EmDash](https://github
 
 ## Infrastructure
 
+All of the below runs locally only, via Wrangler's emulation — this site is never deployed.
+
 - **Runtime:** Cloudflare Workers
 - **Database:** D1
 - **Storage:** R2
@@ -35,20 +35,9 @@ A general-purpose starting point for building sites with [EmDash](https://github
 
 ```bash
 pnpm install
-pnpm bootstrap
 pnpm dev
 ```
 
-## Deploying
-
-```bash
-pnpm deploy
-```
-
-Or click the deploy button above to set up the project in your Cloudflare account.
-
 ## See Also
 
-- [Node.js variant](../starter) -- same template using SQLite and local file storage
-- [All templates](../)
 - [EmDash documentation](https://github.com/emdash-cms/emdash/tree/main/docs)
