@@ -7,21 +7,25 @@ This is a pnpm workspace: `hosts/*` (the EmDash site) and `packages/*` (plugins)
 Run from the repo root:
 
 ```bash
-pnpm format         # write: oxfmt, then Prettier on .astro
-pnpm format:check   # check only, fails on any difference
-pnpm lint           # oxlint, type-aware, fails on warnings
-pnpm lint:fix       # applies safe fixes; unlike lint, does not fail on warnings
+pnpm dev             # every workspace project with a `dev` script, in parallel
+pnpm build           # every workspace project with a `build` script
+pnpm test            # every workspace project with a `test` script
+pnpm format          # write: oxfmt, then Prettier on .astro
+pnpm format:check    # check only, fails on any difference
+pnpm lint            # oxlint, type-aware, fails on warnings
+pnpm lint:fix        # applies safe fixes; unlike lint, does not fail on warnings
 ```
 
-Typecheck, tests and builds are per package, not at the root:
+`dev`/`build`/`test` fan out with `pnpm -r --if-present`: a workspace project without that script is skipped rather than failing the run, so nothing needs updating here when a package is added or doesn't need one of these. See [ADR-0001](docs/adr/0001-root-scripts-fan-out-recursively.md) for why.
+
+To target a single package instead of the whole workspace (e.g. while debugging), use `--filter`:
 
 ```bash
-pnpm --filter @azydeco/emdash-plugin-custom-404 typecheck
 pnpm --filter @azydeco/emdash-plugin-custom-404 test
 pnpm --filter web-cloudflare build
 ```
 
-The host's `typecheck` script (`astro check`) does not run under TypeScript 7, which this workspace pins: the Astro language server needs an API that TypeScript's native compiler does not expose yet (see the Astro roadmap discussion the error links to). Use the build as the host's check until Astro catches up.
+There is no root `typecheck` script. The host's `typecheck` script (`astro check`) does not run under TypeScript 7, which this workspace pins: the Astro language server needs an API that TypeScript's native compiler does not expose yet (see the Astro roadmap discussion the error links to). Use `pnpm build` (or `pnpm --filter web-cloudflare build`) as the host's check until Astro catches up; the plugin's `pnpm --filter @azydeco/emdash-plugin-custom-404 typecheck` still works.
 
 There is no CI yet, so these are the checks. The pre-commit hook (below) runs format and lint on staged files; run `pnpm lint` and `pnpm format:check` yourself before considering a change done, since the hook only sees what you staged.
 

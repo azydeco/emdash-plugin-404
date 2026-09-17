@@ -9,6 +9,9 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
+		"dev": "pnpm -r --if-present --parallel run dev",
+		"build": "pnpm -r --if-present run build",
+		"test": "pnpm -r --if-present run test",
 		"lint": "oxlint --type-aware --deny-warnings",
 		"lint:fix": "oxlint --type-aware --fix",
 		"format": "oxfmt && prettier --write \"**/*.astro\"",
