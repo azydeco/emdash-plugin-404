@@ -112,6 +112,7 @@ Details worth knowing:
 - The Chrome config opens `http://localhost:4321`. If the Dev server came up on another port because 4321 was taken, edit the URL for that session.
 - The admin UI needs a login. Use the dev-only auth bypass route; see [Admin login](hosts/web-cloudflare/README.md#admin-login-dev-only) in the Test site README.
 - Breakpoints in the plugin's source bind because the Test site links the package with `workspace:*` and imports its `.ts` directly; the worker reports the absolute source path and an inline source map.
+- In the browser session, Vite serves the plugin's files (outside the host root) as `/@fs/<absolute path>`. The Chrome config maps that prefix to `/` with `pathMapping` (to `""` under the `windows` override, since Vite's prefix is followed by a drive letter there); without it, breakpoints in `src/admin/*` stay hollow (unbound). Verified on Linux/WSL only. The config's URL goes through the auth bypass first, so the debug Chrome is logged in.
 
 ## Editor
 

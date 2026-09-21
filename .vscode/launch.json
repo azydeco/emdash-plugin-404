@@ -27,8 +27,23 @@
 			"type": "chrome",
 			"request": "launch",
 			"browserLaunchLocation": "ui",
-			"url": "http://localhost:4321/_emdash/api/auth/dev-bypass?content=0&redirect=/_emdash/admin",
-			"webRoot": "${workspaceFolder}/hosts/web-cloudflare"
+			"url": "http://127.0.0.1:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin/plugins/custom-404/",
+			"webRoot": "${workspaceFolder}/hosts/web-cloudflare",
+			// Vite serves files outside the host root (the workspace-linked plugin)
+			// as /@fs/<absolute path>. The debugger has no built-in rule for that
+			// prefix and would look under webRoot, leaving breakpoints unbound.
+			"pathMapping": {
+				"/@fs/": "/"
+			},
+			// This path is currently untested. It may need adjustments depending on the Windows environment.
+			// On Windows, Vite's prefix is followed by a drive letter (/@fs/C:/...),
+			// so the remainder is already an absolute path and maps onto "".
+			// Untested on Windows and macOS; the Linux/WSL mapping above is verified.
+			"windows": {
+				"pathMapping": {
+					"/@fs/": ""
+				}
+			}
 		}
 	],
 	"compounds": [

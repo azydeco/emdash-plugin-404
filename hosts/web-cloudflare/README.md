@@ -43,7 +43,7 @@ pnpm dev
 Passkeys work locally.
 If, however, you use a password manager to manage your passkeys, you won't be able to use the passkey when trying to access the Chrome instance used to hit the debug points in VS Code because Chrome extensions Are disabled in that instance.   Two dev-only routes sign you in as `dev@emdash.local` (admin) instead:
 
-- `/_emdash/api/auth/dev-bypass?content=0&redirect=/_emdash/admin` — just creates a session. Use this.
+- `_emdash/api/auth/dev-bypass?redirect=/_emdash/admin/plugins/custom-404/` — just creates a session. Use this.
 - `/_emdash/api/setup/dev-bypass?redirect=/_emdash/admin` — the URL the Dev server prints. Also runs migrations and re-applies `seed/seed.json` on every visit. Only needed on an empty database.
 - `content=0` on the setup route skips the seed's sample content (`?content=0&redirect=...`).
 - Reference: the header comment of `emdash/src/astro/routes/api/setup/dev-bypass.ts`. No docs page lists the parameters.
