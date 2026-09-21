@@ -110,6 +110,7 @@ Details worth knowing:
 - The worker attach has `restart: true`: when you restart the Dev server (for example after `astro build` breaks it, see the [README](README.md)), the session reconnects on its own instead of dying.
 - The attach fails within ten seconds if nothing is listening. That is the "start `pnpm dev` first" reminder, not a bug.
 - The Chrome config opens `http://localhost:4321`. If the Dev server came up on another port because 4321 was taken, edit the URL for that session.
+- The admin UI needs a login. Use the dev-only auth bypass route; see [Admin login](hosts/web-cloudflare/README.md#admin-login-dev-only) in the Test site README.
 - Breakpoints in the plugin's source bind because the Test site links the package with `workspace:*` and imports its `.ts` directly; the worker reports the absolute source path and an inline source map.
 
 ## Editor
