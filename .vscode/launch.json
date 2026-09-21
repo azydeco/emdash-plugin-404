@@ -1,0 +1,60 @@
+{
+	// Debugging the Test site and the plugin. Start the Dev server yourself first
+	// (`pnpm dev` from the repo root); these configs only attach to it, never start it.
+	// See CONTRIBUTING.md#debugging for what each session reaches.
+	"version": "0.2.0",
+	"configurations": [
+		{
+			// Request-time code: host pages, worker.ts, and the plugin's routes,
+			// plugin.ts and Custom404.astro. It runs in workerd, whose DevTools
+			// inspector is pinned to 9229 in hosts/web-cloudflare/astro.config.mjs.
+			"name": "Attach to Test site worker (pnpm dev first)",
+			"type": "node",
+			"request": "attach",
+			// The inspector proxy listens on IPv4 only (127.0.0.1:9229) on both Linux
+			// and Windows; "localhost" resolves to ::1 first on Windows.
+			"address": "127.0.0.1",
+			"port": 9229,
+			"restart": true,
+			"cwd": "${workspaceFolder}",
+			"resolveSourceMapLocations": null,
+			"attachExistingChildren": false,
+			"autoAttachChildProcesses": false,
+			"skipFiles": ["<node_internals>/**"]
+		},
+		{
+			// The plugin's admin UI (src/admin.tsx, src/admin/*) runs in the browser.
+			// browserLaunchLocation "ui" opens Chrome on the VS Code client machine, so
+			// this works from Remote-WSL where no Linux browser is installed.
+			"name": "Debug admin UI in Chrome (pnpm dev first)",
+			"type": "chrome",
+			"request": "launch",
+			"browserLaunchLocation": "ui",
+			"url": "http://127.0.0.1:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin/plugins/custom-404/",
+			"webRoot": "${workspaceFolder}/hosts/web-cloudflare",
+			// Vite serves files outside the host root (the workspace-linked plugin)
+			// as /@fs/<absolute path>. The debugger has no built-in rule for that
+			// prefix and would look under webRoot, leaving breakpoints unbound.
+			"pathMapping": {
+				"/@fs/": "/"
+			},
+			// On Windows, Vite's prefix is followed by a drive letter (/@fs/C:/...),
+			// so the remainder is already an absolute path and maps onto "".
+			// Verified on Windows and on Linux (Remote-WSL); macOS untested but uses the Linux rule.
+			"windows": {
+				"pathMapping": {
+					"/@fs/": ""
+				}
+			}
+		}
+	],
+	"compounds": [
+		{
+			"name": "Test site worker + admin UI (pnpm dev first)",
+			"configurations": [
+				"Attach to Test site worker (pnpm dev first)",
+				"Debug admin UI in Chrome (pnpm dev first)"
+			]
+		}
+	]
+}
