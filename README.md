@@ -50,4 +50,5 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checks workflow, the pre-c
 ## More
 
 - Lint, format, and typecheck workflow: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Debugging the Test site and the plugin from VS Code: [`CONTRIBUTING.md#debugging`](CONTRIBUTING.md#debugging)
 - Configuring or extending the plugin itself: [`packages/emdash-plugin-custom-404/README.md`](packages/emdash-plugin-custom-404/README.md)

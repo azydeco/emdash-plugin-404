@@ -85,6 +85,33 @@ The hook is installed by `pnpm install` (the root `prepare` script runs `husky`)
 
 Never pass an argument to `husky`. It treats its first argument as the hooks directory, so `husky --version` silently points `core.hooksPath` at a `--version/_` directory and every commit then fails with `sh: 0: Illegal option --`. `pnpm exec husky` with no arguments puts it back.
 
+## Debugging
+
+`.vscode/launch.json` holds the debug configurations. They **attach** to a Dev server you have already started; nothing in VS Code starts one, because the Dev server is normally left running between edits and a second process would fight the first for ports and the Vite cache. Start it first:
+
+```bash
+pnpm dev             # then F5
+```
+
+Request-time code does not run in Node. The Cloudflare adapter runs `astro dev`'s SSR environment inside workerd (Cloudflare's runtime, via `@cloudflare/vite-plugin`), so a Node debugger on the `astro` process never reaches a page or a plugin route. Each context has its own session:
+
+| What you want to pause in | Runs in | Use |
+| --- | --- | --- |
+| Host pages (`src/pages/*.astro` frontmatter), `src/worker.ts`, and the plugin's `routes.ts`, `plugin.ts`, `Custom404.astro` | workerd | **Attach to Test site worker**. Attaches to the workerd DevTools inspector on port 9229, then hit the route in a browser or with `curl`. |
+| The plugin's admin UI (`src/admin.tsx`, `src/admin/*`) | Browser | **Debug admin UI in Chrome**. Launches Chrome on the VS Code client machine (works from Remote-WSL, where there is no Linux browser) at the plugin's admin page. Log in via the admin UI as usual. |
+| Plugin unit tests | Node (Vitest) | The recommended Vitest extension: "Debug Test" from the gutter or the Testing view. No launch config needed. |
+| Config-time code (`astro.config.mjs`, the `custom404Plugin()` descriptor factory) | Node (Vite) | Start `pnpm dev` from a **JavaScript Debug Terminal** (Terminal menu). Node-side breakpoints bind automatically; it does not interfere with the worker attach. |
+
+The compound **Test site worker + admin UI** runs the first two together.
+
+Details worth knowing:
+
+- The inspector port is pinned to 9229 in `hosts/web-cloudflare/astro.config.mjs` (`cloudflare({ inspectorPort: 9229 })`). Unpinned, the Vite plugin silently moves to the next free port and the attach connects to nothing. If 9229 is busy, free it rather than editing the pin.
+- The worker attach has `restart: true`: when you restart the Dev server (for example after `astro build` breaks it, see the [README](README.md)), the session reconnects on its own instead of dying.
+- The attach fails within ten seconds if nothing is listening. That is the "start `pnpm dev` first" reminder, not a bug.
+- The Chrome config opens `http://localhost:4321`. If the Dev server came up on another port because 4321 was taken, edit the URL for that session.
+- Breakpoints in the plugin's source bind because the Test site links the package with `workspace:*` and imports its `.ts` directly; the worker reports the absolute source path and an inline source map.
+
 ## Editor
 
 `.vscode/extensions.json` recommends `oxc.oxc-vscode` (lint and format) and `astro-build.astro-vscode` (format for `.astro`). `.vscode/settings.json` wires them up: oxc is the default formatter, Astro files use the Astro extension, and `source.fixAll.oxc` runs on explicit save. The Oxc extension does not bundle the tools; it runs the `oxlint` and `oxfmt` installed in `node_modules`, so it reads the root configs with no extension settings.
@@ -99,5 +126,6 @@ Never pass an argument to `husky`. It treats its first argument as the hooks dir
 | `package.json`          | The scripts, and the `lint-staged` block                              |
 | `.husky/pre-commit`     | Runs lint-staged                                                      |
 | `.vscode/settings.json` | Formatter and code-action wiring for the two extensions               |
+| `.vscode/launch.json`   | Debug configurations: worker attach, admin UI in Chrome, and their compound |
 
 The lint and format ignore lists are kept identical, except that the linter also ignores every `.d.ts`.
