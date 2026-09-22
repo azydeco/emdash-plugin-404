@@ -8,7 +8,7 @@ A pnpm workspace with two packages:
 ## Requirements
 
 - **Node.js ≥ 22.16** — the floor set by this workspace's dependencies (`emdash` requires `>=22.16`; `astro` and `wrangler` require slightly older versions).
-- **pnpm 12.4.1** — pinned in the root `package.json`. With Corepack enabled (bundled with Node), it's installed automatically the first time you run a pnpm command here — no manual install needed.
+- **pnpm 12.4.1** — [installation details are on the pnpm website](https://pnpm.io/installation)
 
 ## Setup
 
@@ -25,7 +25,7 @@ pnpm install
 pnpm dev
 ```
 
-Then open `http://localhost:4321/does-not-exist` in a browser. You'll see a genuine HTTP 404 rendered by the plugin — its fallback markup by default, or your own configured 404 content once you've enabled that from the admin UI. Either way, no extra setup is required to see it working.
+Then open `http://localhost:4321/does-not-exist` in a browser. Out of the box the plugin is disabled, so you'll see a genuine HTTP 404 rendered by its fallback markup. Enable the plugin from the admin dashboard to serve your own configured 404 content instead. Either way, no extra setup is required to see it working.
 
 To verify the response itself instead of eyeballing the page, see the plugin README's [`curl -I` check](packages/emdash-plugin-custom-404/README.md#verifying-the-404-response).
 
