@@ -52,3 +52,6 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checks workflow, the pre-c
 - Lint, format, and typecheck workflow: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Debugging the Test site and the plugin from VS Code: [`CONTRIBUTING.md#debugging`](CONTRIBUTING.md#debugging)
 - Configuring or extending the plugin itself: [`packages/emdash-plugin-custom-404/README.md`](packages/emdash-plugin-custom-404/README.md)
+
+
+Azydeco chooses the MIT license for this project to ensure that developers can feel they have access to the source code within their native Emdash deploys without a concern that they are expected to deliver access to the origins of this source within their own deploys. The freedoms of the MIT license both commercially and in terms of Source access are considered to be the best option for this project.
