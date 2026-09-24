@@ -375,13 +375,13 @@ const isLoggedIn = !!Astro.locals.user;
 				}
 
 				/*
-					 * Design tokens live in src/styles/tokens.css. Colors are
-					 * defined with light-dark(); these rules pin the scheme when
-					 * the footer switcher sets an explicit choice. With no class,
-					 * color-scheme: light dark follows the OS preference. The
-					 * @supports guard keeps the toggle from forcing dark UA form
-					 * controls on browsers stuck on the plain-light fallback.
-					 */
+							 * Design tokens live in src/styles/tokens.css. Colors are
+							 * defined with light-dark(); these rules pin the scheme when
+							 * the footer switcher sets an explicit choice. With no class,
+							 * color-scheme: light dark follows the OS preference. The
+							 * @supports guard keeps the toggle from forcing dark UA form
+							 * controls on browsers stuck on the plain-light fallback.
+							 */
 				@supports (color: light-dark(#000, #fff)) {
 					:root.light {
 						color-scheme: light;
