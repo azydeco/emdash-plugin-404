@@ -14,8 +14,6 @@
 		"@astrojs/react": "catalog:",
 		"@azydeco/emdash-plugin-custom-404": "workspace:*",
 		"@emdash-cms/cloudflare": "catalog:",
-		"@emdash-cms/plugin-forms": "^0.2.7",
-		"@emdash-cms/plugin-webhook-notifier": "^0.2.0",
 		"@types/node": "catalog:",
 		"astro": "catalog:",
 		"emdash": "catalog:",

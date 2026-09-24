@@ -5,10 +5,6 @@ import { d1, r2, sandbox } from "@emdash-cms/cloudflare";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 
-// other plugins have been removed for simplicity
-// import { formsPlugin } from "@emdash-cms/plugin-forms";
-// import webhookNotifier from "@emdash-cms/plugin-webhook-notifier";
-
 export default defineConfig({
 	output: "server",
 	// `inspectorPort` pins the workerd DevTools inspector so `.vscode/launch.json`
