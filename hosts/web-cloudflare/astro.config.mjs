@@ -1,9 +1,13 @@
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import { custom404Plugin } from "@azydeco/emdash-plugin-custom-404";
-import { d1, r2 } from "@emdash-cms/cloudflare";
-import { defineConfig } from "astro/config";
+import { d1, r2, sandbox } from "@emdash-cms/cloudflare";
+import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
+
+// other plugins have been removed for simplicity
+// import { formsPlugin } from "@emdash-cms/plugin-forms";
+// import webhookNotifier from "@emdash-cms/plugin-webhook-notifier";
 
 export default defineConfig({
 	output: "server",
@@ -22,7 +26,25 @@ export default defineConfig({
 			storage: r2({ binding: "MEDIA" }),
 			// Native plugin: must be in `plugins`, never `sandboxed`.
 			plugins: [custom404Plugin()],
+			sandboxed: [],
+			sandboxRunner: sandbox(),
 		}),
+	],
+	fonts: [
+		{
+			provider: fontProviders.google(),
+			name: "Inter",
+			cssVariable: "--font-body",
+			weights: [400, 500, 600, 700],
+			fallbacks: ["sans-serif"],
+		},
+		{
+			provider: fontProviders.google(),
+			name: "JetBrains Mono",
+			cssVariable: "--font-mono",
+			weights: [400, 500],
+			fallbacks: ["monospace"],
+		},
 	],
 	devToolbar: { enabled: false },
 });

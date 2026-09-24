@@ -11,10 +11,43 @@ import Base from "../layouts/Base.astro";
 markNotFound(Astro.response);
 ---
 
-<Base title="Not Found">
-	<Custom404>
-		<h1>Page not found</h1>
-		<p>The page you're looking for doesn't exist.</p>
-		<a href="/">Go home</a>
-	</Custom404>
+<Base title="Page not found">
+	<div class="wrapper-404">
+		<Custom404>
+			<div class="not-found">
+				<h1>404</h1>
+				<p>The page you're looking for doesn't exist.</p>
+				<a href="/">Go back home..</a>
+			</div>
+		</Custom404>
+	</div>
 </Base>
+
+<style>
+	.wrapper-404 {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: 50vh;
+	}
+
+	/* .not-found {
+		text-align: center;
+		padding: var(--spacing-24) var(--spacing-6);
+	}
+
+	.not-found h1 {
+		font-size: var(--font-size-5xl);
+		margin-bottom: var(--spacing-2);
+		color: var(--color-border);
+	}
+
+	.not-found p {
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-6);
+	}
+
+	.not-found a {
+		color: var(--color-text);
+	} */
+</style>

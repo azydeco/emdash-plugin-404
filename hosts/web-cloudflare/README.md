@@ -10,6 +10,18 @@ The Test site this monorepo uses to develop and exercise `packages/emdash-plugin
 - D1 database and R2 storage pre-configured
 - Dark/light mode support
 
+
+## What's Included
+
+- Featured post hero on the homepage
+- Post archive with reading time estimates
+- Category and tag archives
+- Full-text search
+- RSS feed
+- SEO metadata and JSON-LD
+- Dark/light mode
+- Forms plugin and webhook notifier
+
 ## Pages
 
 | Page | Route |
@@ -19,12 +31,18 @@ The Test site this monorepo uses to develop and exercise `packages/emdash-plugin
 | Single post | `/posts/:slug` |
 | Category archive | `/category/:slug` |
 | Tag archive | `/tag/:slug` |
-| Static pages | `/:slug` |
-| 404 | fallback |
+| Search | `/search` |
+| Static pages | `/pages/:slug` |
+| 404 | `404 plugin renderer` and fallback  |
+
+## Screenshots
+
+| | Desktop | Mobile |
+|---|---|---|
+| Light | ![homepage light desktop](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/blog/latest/homepage-light-desktop.jpg) | ![homepage light mobile](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/blog/latest/homepage-light-mobile.jpg) |
+| Dark | ![homepage dark desktop](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/blog/latest/homepage-dark-desktop.jpg) | ![homepage dark mobile](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/blog/latest/homepage-dark-mobile.jpg) |
 
 ## Infrastructure
-
-All of the below runs locally only, via Wrangler's emulation — this site is never deployed.
 
 - **Runtime:** Cloudflare Workers
 - **Database:** D1

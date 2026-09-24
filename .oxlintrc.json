@@ -14,7 +14,10 @@
 		// A stylesheet has nothing to bind to; `import "./theme.css"` is the only
 		// way to pull one in for its side effect. The rule's own docs give
 		// `**/*.css` as the example allow-pattern for this case.
-		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }]
+		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+		// `_type` is Portable Text's own field name (from the CMS content
+		// shape), not a private-variable convention we chose.
+		"no-underscore-dangle": ["warn", { "allow": ["_type"] }]
 	},
 	"overrides": [
 		{
