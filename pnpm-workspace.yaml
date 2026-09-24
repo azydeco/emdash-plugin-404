@@ -16,26 +16,24 @@ allowBuilds:
   workerd: true
 
 catalog:
-  "@astrojs/check": ^0.9.7
-  "@astrojs/cloudflare": ^14.0.0
-  "@astrojs/react": ^6.0.0
-  "@cloudflare/workers-types": ^4.20260603.1
-  "@emdash-cms/cloudflare": 0.38.0
-  # "@types/node": 26.5.1
-
+  "@astrojs/check": ^0.9.10
+  "@astrojs/cloudflare": ^14.3.3
+  "@astrojs/react": ^6.0.6
+  "@cloudflare/workers-types": ^5.20260923.1
+  "@emdash-cms/cloudflare": 0.39.1
   "@types/node": ^24.13.3
-  astro: ^7.0.0
-  emdash: 0.38.0
-  react: 19.2.4
-  react-dom: 19.2.4
-  hono: ^4.13.7
+  astro: ^7.3.4
+  emdash: 0.39.1
+  react: 19.3.0
+  react-dom: 19.3.0
+  hono: ^4.13.8
   tsdown: 0.23.0
   typescript: ^7.0.2
-  tsx: ^4.23.13
-  vitest: ^4.1.8
-  zod: ^4.5.4
+  tsx: ^4.23.15
+  vitest: ^4.1.9
+  zod: ^4.6.5
   modern-tar: ^0.8.5
-  wrangler: ^4.131.2
+  wrangler: ^4.136.3
 
 overrides:
   "@cloudflare/vite-plugin": 1.54.9
