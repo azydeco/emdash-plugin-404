@@ -1,19 +1,19 @@
-# EmDash Blog Template
+# EmDash Test Site (Node)
 
-A clean, minimal blog built with [EmDash](https://github.com/emdash-cms/emdash). Runs on any Node.js server with SQLite and local file storage.
-
-![Blog template homepage](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/blog/latest/homepage-light-desktop.jpg)
+The Test site this monorepo uses to develop and exercise `packages/emdash-plugin-custom-404` against a real EmDash/Astro app on the Node adapter. It runs locally only. Includes posts, pages, categories, and tags with minimal styling.
 
 ## What's Included
 
+- Posts with category and tag archives
+- Static pages via slug routing
+- Seed data with demo content
+- SQLite database and local file storage pre-configured
+- Dark/light mode support
 - Featured post hero on the homepage
 - Post archive with reading time estimates
-- Category and tag archives
 - Full-text search
 - RSS feed
 - SEO metadata and JSON-LD
-- Dark/light mode
-- Audit log plugin
 
 ## Pages
 
@@ -26,7 +26,7 @@ A clean, minimal blog built with [EmDash](https://github.com/emdash-cms/emdash).
 | Tag archive | `/tag/:slug` |
 | Search | `/search` |
 | Static pages | `/pages/:slug` |
-| 404 | fallback |
+| 404 | `404 plugin renderer` and fallback  |
 
 ## Screenshots
 
@@ -42,23 +42,26 @@ A clean, minimal blog built with [EmDash](https://github.com/emdash-cms/emdash).
 - **Storage:** Local filesystem
 - **Framework:** Astro with `@astrojs/node`
 
-## Getting Started
+## Local Development
 
 ```bash
 pnpm install
-pnpm bootstrap
+cp .env.example .env
+npx emdash secrets generate  # paste the printed key into .env
 pnpm dev
 ```
 
-Open http://localhost:4321 for the site and http://localhost:4321/_emdash/admin for the CMS.
+### Admin login (dev only)
 
-## Want Cloudflare Instead?
+**Note:** if you get the following error when using the dev bypass url ```{"success":false,"error":{"code":"DEV_BYPASS_ERROR","message":"Dev bypass failed"}}  ```  check if you have deleted a page in the cms, the seed is trying to re-create the page but the entry still exists in the db but with the same file hash, is a known issue [emdash-cms/emdash#1814](https://github.com/emdash-cms/emdash/pull/1814)
 
-See the [Cloudflare variant](../blog-cloudflare) for a version that deploys to Cloudflare Workers with D1 and R2.
+Passkeys work locally.
+If, however, you use a password manager to manage your passkeys, you won't be able to use the passkey when trying to access the Chrome instance used to hit the debug points in VS Code because Chrome extensions Are disabled in that instance.   Two dev-only routes sign you in as `dev@emdash.local` (admin) instead:
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/emdash-cms/templates/tree/main/blog-cloudflare)
+- `_emdash/api/auth/dev-bypass?redirect=/_emdash/admin/plugins/custom-404/` — just creates a session. Use this.
+- `/_emdash/api/setup/dev-bypass?redirect=/_emdash/admin` — the URL the Dev server prints. Also runs migrations and re-applies `seed/seed.json` on every visit. Only needed on an empty database.
+- `content=0` on the setup route skips the seed's sample content (`?content=0&redirect=...`).
 
 ## See Also
 
-- [All templates](../)
 - [EmDash documentation](https://github.com/emdash-cms/emdash/tree/main/docs)

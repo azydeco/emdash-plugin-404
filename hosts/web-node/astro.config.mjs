@@ -1,6 +1,6 @@
 import node from "@astrojs/node";
 import react from "@astrojs/react";
-import auditLog from "@emdash-cms/plugin-audit-log";
+import { custom404Plugin } from "@azydeco/emdash-plugin-custom-404";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash, { local } from "emdash/astro";
 import { sqlite } from "emdash/db";
@@ -22,7 +22,8 @@ export default defineConfig({
 				directory: "./uploads",
 				baseUrl: "/_emdash/api/media/file",
 			}),
-			plugins: [auditLog],
+			// Native plugin: must be in `plugins`, never `sandboxed`.
+			plugins: [custom404Plugin()],
 		}),
 	],
 	fonts: [

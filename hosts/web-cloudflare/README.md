@@ -53,6 +53,8 @@ The Test site this monorepo uses to develop and exercise `packages/emdash-plugin
 
 ```bash
 pnpm install
+cp .env.example .env
+npx emdash secrets generate  # paste the printed key into .env
 pnpm dev
 ```
 
