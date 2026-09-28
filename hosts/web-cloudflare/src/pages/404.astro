@@ -50,4 +50,52 @@ markNotFound(Astro.response);
 	.not-found a {
 		color: var(--color-text);
 	} */
+
+	/* Outer wrapper. Gap between image/content; also present per
+	   custom-404-page--placement-{above,below,left,right} modifier. */
+	:global(.custom-404-page) {
+		gap: var(--spacing-8);
+	}
+
+	/* Wider gap for the side-by-side placements only. */
+	:global(.custom-404-page--placement-left),
+	:global(.custom-404-page--placement-right) {
+		gap: var(--spacing-12);
+	}
+
+	/* <figure> around the optional image. */
+	:global(.custom-404-page__image) {
+		max-width: 20rem;
+	}
+
+	/* Wrapper around the heading, paragraphs, and CTA. */
+	:global(.custom-404-page__content) {
+		text-align: left;
+	}
+
+	/* The headline <h1>. */
+	:global(.custom-404-page__heading) {
+		font-size: var(--font-size-4xl);
+		color: var(--color-text);
+	}
+
+	/* One <p> per body paragraph. */
+	:global(.custom-404-page__paragraph) {
+		color: var(--color-text-secondary);
+	}
+
+	/* The CTA <a>. Only present when a CTA is configured. */
+	:global(.custom-404-page__cta) {
+		display: inline-block;
+		background: var(--color-brand);
+		color: white;
+		padding: var(--spacing-3) var(--spacing-6);
+		border-radius: var(--radius);
+		text-decoration: none;
+		transition: background var(--transition-base);
+	}
+
+	:global(.custom-404-page__cta:hover) {
+		background: color-mix(in srgb, var(--color-brand) 85%, black);
+	}
 </style>
