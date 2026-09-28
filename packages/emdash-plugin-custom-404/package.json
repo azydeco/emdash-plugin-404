@@ -37,7 +37,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@emdash-cms/admin": "0.37.0",
+		"@emdash-cms/admin": "0.40.0",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"astro": "catalog:",
