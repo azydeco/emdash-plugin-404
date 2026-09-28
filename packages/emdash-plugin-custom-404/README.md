@@ -72,6 +72,75 @@ Use `Astro.rewrite("/404")`, not `Astro.redirect("/404")`, wherever a page needs
 
 A redirect sends a 302 first and the 404 page loads as a second request, which fails a `curl -I` 404 check against the original URL. A rewrite renders `404.astro` in place, so the status and headers below land on the URL the visitor actually requested.
 
+## Styling the rendered page
+
+`Custom404`'s own `<style>` block only sets layout (image placement and sizing) — never colour or typography, by design. Everything else inherits from the host, through this class surface:
+
+| Class | Element |
+| --- | --- |
+| `.custom-404-page` | Outer wrapper. Also carries `custom-404-page--placement-{above,below,left,right}`, matching the admin's Placement field. |
+| `.custom-404-page__image` | `<figure>` around the optional image. |
+| `.custom-404-page__content` | Wrapper around the heading, paragraphs, and CTA. |
+| `.custom-404-page__heading` | The headline `<h1>`. |
+| `.custom-404-page__paragraph` | One `<p>` per body paragraph. |
+| `.custom-404-page__cta` | The CTA `<a>`. Only present when a CTA is configured. |
+
+This markup renders inside `Custom404.astro`'s own component template, not your page's — so a scoped `<style>` block in your `404.astro` won't match it (different Astro scope id) even though the elements appear inside it. Reach these classes with `:global(...)`, or from an unscoped/global stylesheet.
+
+The block below touches every class in the table above — a reference to copy from and trim down, not something to paste in whole. `hosts/web-cloudflare/src/pages/404.astro` only keeps the CTA rule, since that's the only override that page actually needs:
+
+```astro
+<style>
+	/* Outer wrapper. Gap between image/content; also present per
+	   custom-404-page--placement-{above,below,left,right} modifier. */
+	:global(.custom-404-page) {
+		gap: var(--spacing-8);
+	}
+
+	/* Wider gap for the side-by-side placements only. */
+	:global(.custom-404-page--placement-left),
+	:global(.custom-404-page--placement-right) {
+		gap: var(--spacing-12);
+	}
+
+	/* <figure> around the optional image. */
+	:global(.custom-404-page__image) {
+		max-width: 20rem;
+	}
+
+	/* Wrapper around the heading, paragraphs, and CTA. */
+	:global(.custom-404-page__content) {
+		text-align: left;
+	}
+
+	/* The headline <h1>. */
+	:global(.custom-404-page__heading) {
+		font-size: var(--font-size-4xl);
+		color: var(--color-text);
+	}
+
+	/* One <p> per body paragraph. */
+	:global(.custom-404-page__paragraph) {
+		color: var(--color-text-secondary);
+	}
+
+	/* The CTA <a>. Only present when a CTA is configured. */
+	:global(.custom-404-page__cta) {
+		display: inline-block;
+		background: var(--color-brand);
+		color: white;
+		padding: var(--spacing-3) var(--spacing-6);
+		border-radius: var(--radius);
+		text-decoration: none;
+		transition: background var(--transition-base);
+	}
+
+	:global(.custom-404-page__cta:hover) {
+		background: color-mix(in srgb, var(--color-brand) 85%, black);
+	}
+</style>
+```
+
 ## Configuring the 404 page
 
 Editors configure one site-wide document from the admin page:
