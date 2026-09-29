@@ -1,6 +1,6 @@
 {
 	"name": "@azydeco/emdash-plugin-custom-404",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Native EmDash plugin that lets editors configure the site's 404 page from the admin and serves it with a genuine 404 status.",
 	"keywords": [
 		"404",
