@@ -9,6 +9,7 @@ Work through this list for every release. Each step is explained in more detail 
 - [ ] `packages/emdash-plugin-custom-404/README.md` covers any user-facing change. npm displays this README as the package page.
 - [ ] `pnpm test`, `pnpm lint` and `pnpm format:check` pass. Run them from the repo root.
 - [ ] The tarball preview lists only the expected files, and `catalog:` has resolved to real ranges (see [Preview the tarball](#preview-the-tarball)).
+- [ ] `pnpm whoami` prints your npm username. `pnpm publish --dry-run` never contacts the registry, so it can't catch a missing or expired login.
 - [ ] Published with `pnpm publish` (see [Publish](#publish)).
 
 ## Where to run the commands
@@ -86,8 +87,11 @@ Publish from an up-to-date `main` after the release PR is merged. `--no-git-chec
 Run this from `packages/emdash-plugin-custom-404`:
 
 ```bash
+pnpm whoami              # confirms you're logged in to npm
 pnpm publish --dry-run   # runs every check and prints what would be published, without uploading
 pnpm publish
 ```
 
 This package is scoped, and `publishConfig.access: "public"` is already set, so you don't need an `--access` flag. If the `version` in `package.json` is already on the registry, the publish is rejected. Bump the version and try again.
+
+If the publish fails with `404 Not Found` for a package that already exists on npm, you aren't authenticated. The registry reports a missing or expired login on a scoped package as a 404, not a 401. Run `pnpm login --scope=@azydeco` and try again.
