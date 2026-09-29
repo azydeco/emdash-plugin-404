@@ -1,6 +1,6 @@
 {
 	"name": "@azydeco/emdash-plugin-custom-404",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Native EmDash plugin that lets editors configure the site's 404 page from the admin and serves it with a genuine 404 status.",
 	"keywords": [
 		"404",
@@ -37,7 +37,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@emdash-cms/admin": "0.40.0",
+		"@emdash-cms/admin": "catalog:",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"astro": "catalog:",
@@ -48,9 +48,9 @@
 		"vitest": "catalog:"
 	},
 	"peerDependencies": {
-		"@emdash-cms/admin": ">=0.37.0",
+		"@emdash-cms/admin": ">=1.0.0",
 		"astro": ">=7.0.0",
-		"emdash": ">=0.37.0",
+		"emdash": ">=1.0.0",
 		"react": "^18 || ^19",
 		"react-dom": "^18 || ^19"
 	}

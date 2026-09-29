@@ -1,41 +1,93 @@
+## Release checklist
+
+Work through this list for every release. Each step is explained in more detail below.
+
+- [ ] The release changes are merged to `main`. Your local `main` is checked out, clean, and up to date with `origin`, because `pnpm publish` refuses to publish from any other state (see [Git checks](#git-checks)).
+- [ ] `version` is bumped in `packages/emdash-plugin-custom-404/package.json`. npm versions are immutable, so every publish needs a new version, including a docs-only change: the README ships in the tarball. Use a patch bump for fixes and docs, and a minor bump for new features. The package is pre-1.0, so a breaking change is also a minor bump.
+- [ ] `PLUGIN_VERSION` in `packages/emdash-plugin-custom-404/src/constants.ts` matches the new `version`. It is the version the plugin reports to EmDash, and it isn't derived from `package.json`.
+- [ ] `peerDependencies` in the plugin's `package.json` still match the `emdash`, `@emdash-cms/admin` and `astro` versions pinned in the root `pnpm-workspace.yaml` catalog.
+- [ ] `packages/emdash-plugin-custom-404/README.md` covers any user-facing change. npm displays this README as the package page.
+- [ ] `pnpm test`, `pnpm lint` and `pnpm format:check` pass. Run them from the repo root.
+- [ ] The tarball preview lists only the expected files, and `catalog:` has resolved to real ranges (see [Preview the tarball](#preview-the-tarball)).
+- [ ] Published with `pnpm publish` (see [Publish](#publish)).
+
+## Where to run the commands
+
+Unless a step says otherwise, **run every command in this guide from the plugin package directory**, not from the repo root:
+
+```bash
+cd packages/emdash-plugin-custom-404   # starting from the repo root
+```
+
+`pnpm pack` and `pnpm publish` act on the package in the current directory. From the repo root, they would pack the private workspace root (`azdeco-404-workspace`) instead of the plugin. If you'd rather stay in the repo root, give each command the package directory with `-C`:
+
+```bash
+pnpm -C packages/emdash-plugin-custom-404 pack --dry-run
+pnpm -C packages/emdash-plugin-custom-404 publish
+```
+
+The lint, format and test scripts are the exception. They are root scripts (see `CONTRIBUTING.md`), so run them from the repo root.
+
 ## Public repository
 
-The plugin is developed under `packages/emdash-plugin-custom-404` in this monorepo, [azydeco/emdash-plugin-404](https://github.com/azydeco/emdash-plugin-404), and published to npm from there with `pnpm publish`. `package.json`'s `repository.directory` field points npm's UI at the subfolder. There is no separate mirror repository and no CI publish workflow yet for v1 — publishing is a manual, maintainer-run step.
+The plugin is developed under `packages/emdash-plugin-custom-404` in the [azydeco/emdash-plugin-404](https://github.com/azydeco/emdash-plugin-404) monorepo and published to npm from that directory with `pnpm publish`. The `repository.directory` field in `package.json` points npm's UI at the subfolder. There is no separate mirror repository and no CI publish workflow, so publishing is a manual step that a maintainer runs.
 
 ## Packaging and publishing a release
 
-`pnpm` publishes this package directly; the `npm` CLI is not required.
+pnpm publishes this package directly, so you don't need the `npm` CLI.
 
-**One-time setup**, if you haven't published from this machine before:
+### One-time setup
 
-- An npm account with publish access to the `@azydeco` scope.
-- Auth: either `pnpm login --scope=azydeco` (interactive, handles 2FA), or an access token from your npm account settings written to `~/.npmrc`:
-  ```
-  //registry.npmjs.org/:_authToken=<token>
-  ```
+Do this if you haven't published from this machine before:
 
-**Preview the tarball** before publishing anything — this never touches the registry:
+- Get an npm account with publish access to the `@azydeco` scope.
+- Authenticate in one of two ways:
+  - Run `pnpm login --scope=@azydeco`. This is interactive and handles 2FA.
+  - Create an access token in your npm account settings and add it to `~/.npmrc`:
+    ```
+    //registry.npmjs.org/:_authToken=<token>
+    ```
+
+### Preview the tarball
+
+Always preview the tarball before publishing. This step never touches the registry. Run it from `packages/emdash-plugin-custom-404`:
 
 ```bash
 pnpm pack --dry-run
 ```
 
-This resolves the `catalog:` version specifiers (e.g. `zod`) to real semver ranges in the packed `package.json`, and applies the `"files"` allowlist in `package.json`. That allowlist ships raw `src/` (no build step, per the native-plugin guide) while excluding `*.test.ts`, `test-support.ts` (the test-only fake KV/fetch helpers), and `src/astro/tsconfig.json`.
+Packing turns the `catalog:` version specifiers (such as `zod`) into real semver ranges in the packed `package.json`. It also applies the `"files"` allowlist from `package.json`. That allowlist ships raw `src/` with no build step, as the native-plugin guide requires. It excludes `*.test.ts`, `test-support.ts` (the test-only fake KV and fetch helpers) and `src/astro/tsconfig.json`.
 
-A note if you add new files later: a `.npmignore` here would have no effect, even placed inside `src/`. Once `"files"` is set in `package.json`, pnpm (like npm) ignores `.npmignore` entirely — a long-standing quirk ([npm/npm#7030](https://github.com/npm/npm/issues/7030)). Exclude new non-runtime files with a negated glob in `"files"` instead, e.g. `"!src/**/*.test.ts"`.
+If you add files later, note that a `.npmignore` has no effect here, whether you put it in the package root or inside `src/`. When `"files"` is set, pnpm ignores `.npmignore` completely. A `.npmignore` placed inside `src/` would itself be shipped. (This was checked with pnpm 12. The npm CLI behaves differently for nested `.npmignore` files, so don't rely on them.) To exclude a new non-runtime file, add a negated glob to `"files"`, for example `"!src/**/*.test.ts"`.
 
-To inspect the exact file list and the resolved manifest without leaving a tarball behind:
+To inspect the exact file list and the resolved manifest:
 
 ```bash
-pnpm pack --dry-run --json          # file list, machine-readable
-pnpm pack --pack-destination /tmp   # writes the real .tgz for local inspection
-tar -xOzf /tmp/azydeco-emdash-plugin-custom-404-*.tgz package/package.json
+pnpm pack --dry-run --json                  # file list, machine-readable; writes nothing
+pnpm pack --pack-destination /tmp           # writes the real .tgz outside the repo
+tar -xOzf /tmp/azydeco-emdash-plugin-custom-404-<version>.tgz package/package.json
+rm /tmp/azydeco-emdash-plugin-custom-404-<version>.tgz
 ```
 
-**Publish**, from this directory (or `pnpm --filter @azydeco/emdash-plugin-custom-404 publish` from the repo root):
+Without `--pack-destination`, `pnpm pack` writes the `.tgz` into the package directory. Delete it so it doesn't end up in a commit.
+
+### Git checks
+
+By default, `pnpm publish` fails with `ERR_PNPM_GIT_NOT_CORRECT_BRANCH` unless all of the following are true:
+
+- The current branch is `main` (or `master`).
+- The working tree is clean.
+- The branch is in sync with its remote.
+
+Publish from an up-to-date `main` after the release PR is merged. `--no-git-checks` skips these checks, but only use it deliberately, for example for a pre-release published under `--tag next`.
+
+### Publish
+
+Run this from `packages/emdash-plugin-custom-404`:
 
 ```bash
+pnpm publish --dry-run   # runs every check and prints what would be published, without uploading
 pnpm publish
 ```
 
-`publishConfig.access: "public"` is already set, so no `--access` flag is needed for this scoped package. Bump `version` in `package.json` first if `0.1.0` has already been published — the registry rejects re-publishing an existing version.
+This package is scoped, and `publishConfig.access: "public"` is already set, so you don't need an `--access` flag. If the `version` in `package.json` is already on the registry, the publish is rejected. Bump the version and try again.

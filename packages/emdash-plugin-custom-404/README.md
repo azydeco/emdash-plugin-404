@@ -11,17 +11,15 @@ Native, not sandboxed, because it needs three things a sandboxed plugin cannot d
 | Public config route | `/_emdash/api/plugins/custom-404/config` |
 | Licence | MIT |
 
-Peer floors: `emdash >=0.37.0`, `astro >=7.0.0`, `react` and `react-dom` `^18 || ^19`, `@emdash-cms/admin >=0.37.0`. Only Astro 7 is claimed — the native plugin guide mentions Astro 6, but only 7 has been verified.
+Peer floors: `emdash >=1.0.0`, `astro >=7.0.0`, `react` and `react-dom` `^18 || ^19`, `@emdash-cms/admin >=1.0.0`.
 
 ## Install
-
-The EmDash Marketplace has been deprecated; the sandboxed plugin registry is now the only listing surface, and it accepts sandboxed plugins only. This plugin — being native — cannot be listed there. That's a limitation of native plugins, not a gap to be filled later. Install it from npm:
 
 ```bash
 pnpm add @azydeco/emdash-plugin-custom-404
 ```
 
-(A `github:` reference is not supported. This package ships from a monorepo — see [Packaging and publishing](https://github.com/azydeco/emdash-plugin-404/blob/main/docs/emdash-plugin-custom-404/packaging.md) — and a git reference would install the whole workspace at its root, not this package, and cannot resolve the `pnpm` catalog versions in its manifest. npm publish handles both, the same way `emdash-cms/emdash` publishes each of its own `@emdash-cms/plugin-*` packages.)
+## Configure Astro
 
 Then register it in `astro.config.mjs`, in `plugins: []` — **never** `sandboxed: []`:
 
@@ -87,9 +85,9 @@ A redirect sends a 302 first and the 404 page loads as a second request, which f
 
 This markup renders inside `Custom404.astro`'s own component template, not your page's — so a scoped `<style>` block in your `404.astro` won't match it (different Astro scope id) even though the elements appear inside it. Reach these classes with `:global(...)`, or from an unscoped/global stylesheet.
 
-The block below touches every class in the table above — a reference to copy from and trim down, not something to paste in whole. `hosts/web-cloudflare/src/pages/404.astro` only keeps the CTA rule, since that's the only override that page actually needs:
+The block below touches every class in the table above — a reference to copy from and trim down, not something to paste in whole.
 
-```astro
+```html
 <style>
 	/* Outer wrapper. Gap between image/content; also present per
 	   custom-404-page--placement-{above,below,left,right} modifier. */
@@ -180,7 +178,6 @@ No `location` header — if you see one, something in the request path is still 
 
 ## Notes for anyone extending the plugin
 
-- `usePluginAPI`, mentioned in the bundled EmDash "creating plugins" skill docs, does not exist in 0.37.0. Use `apiFetch` and `parseApiResponse` from `emdash/plugin-utils` instead.
 - Throwing a `Response` from a plugin route handler for a custom status is not honoured and becomes a JSON 500. Use `PluginRouteError`.
 
 ## Licence
