@@ -50,52 +50,57 @@ const page = await loadCustom404(getPublicPluginApiRouteHandler(Astro.locals));
 	<slot />
 )}
 
-<style>
+<style is:global>
 	/*
 	 * Layout only. Colours and fonts are inherited from the site. The
-	 * `custom-404-page` class names are the documented override surface; Astro
-	 * scopes these rules with zero specificity, so a site's own rules win.
+	 * `custom-404-page` class names are the documented override surface, so
+	 * every selector is wrapped in `:where()` for zero specificity and a
+	 * site's own rules always win. Global rather than scoped: Astro's default
+	 * `attribute` scoping adds a `[data-astro-cid-*]` selector, which would
+	 * outrank a site's plain class override.
 	 */
-	.custom-404-page {
+	:where(.custom-404-page) {
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
+	}
 
-		&.custom-404-page--placement-below {
-			flex-direction: column-reverse;
-		}
+	:where(.custom-404-page--placement-below) {
+		flex-direction: column-reverse;
+	}
 
-		&.custom-404-page--placement-left {
-			flex-direction: row;
-			align-items: flex-start;
-		}
+	:where(.custom-404-page--placement-left) {
+		flex-direction: row;
+		align-items: flex-start;
+	}
 
-		&.custom-404-page--placement-right {
-			flex-direction: row-reverse;
-			align-items: flex-start;
-		}
+	:where(.custom-404-page--placement-right) {
+		flex-direction: row-reverse;
+		align-items: flex-start;
+	}
 
-		@media (max-width: 639px) {
-			&.custom-404-page--placement-left,
-			&.custom-404-page--placement-right {
-				flex-direction: column;
-			}
+	@media (max-width: 639px) {
+		:where(
+			.custom-404-page--placement-left,
+			.custom-404-page--placement-right
+		) {
+			flex-direction: column;
 		}
 	}
 
-	.custom-404-page__image {
+	:where(.custom-404-page__image) {
 		margin: 0;
 		flex: 0 1 auto;
 		max-width: 24rem;
-
-		:global(img) {
-			display: block;
-			max-width: 100%;
-			height: auto;
-		}
 	}
 
-	.custom-404-page__content {
+	:where(.custom-404-page__image img) {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+
+	:where(.custom-404-page__content) {
 		flex: 1 1 0;
 		min-width: 0;
 	}
