@@ -78,10 +78,10 @@ describe("loadCustom404 when the host cannot serve the config", () => {
 	});
 });
 
-describe("loadCustom404 body paragraphs", () => {
-	const withBody = (body: string) =>
-		fakeDispatch({ success: true, data: { ...savedDocument, body } });
+const withBody = (body: string) =>
+	fakeDispatch({ success: true, data: { ...savedDocument, body } });
 
+describe("loadCustom404 body paragraphs", () => {
 	it("starts a new paragraph at each blank line, however the line endings are written", async () => {
 		const page = await loadCustom404(
 			withBody("First line\nstill first.\r\n\r\nSecond.\n\n\n  Third.  \n"),

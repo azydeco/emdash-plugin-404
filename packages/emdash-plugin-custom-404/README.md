@@ -72,7 +72,7 @@ A redirect sends a 302 first and the 404 page loads as a second request, which f
 
 ## Styling the rendered page
 
-`Custom404`'s own `<style>` block only sets layout (image placement and sizing) — never colour or typography, by design. Everything else inherits from the host, through this class surface:
+`Custom404`'s own `<style>` block only sets layout (image placement and sizing) — never colour or typography, by design. Every one of its selectors is wrapped in `:where()`, so it has zero specificity and any matching rule of yours wins, whatever order the stylesheets load in. Everything else inherits from the host, through this class surface:
 
 | Class | Element |
 | --- | --- |

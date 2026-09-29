@@ -19,6 +19,11 @@ const validDocument = {
 	updatedAt: "2026-09-14T10:00:00.000Z",
 };
 
+const withCtaLabel = (label: string) => ({ ...validDocument, cta: { label, href: "/" } });
+const withAlt = (alt: string) => ({ ...validDocument, image: { ...validDocument.image, alt } });
+const withCta = (cta: unknown) => configDocumentSchema.safeParse({ ...validDocument, cta });
+const withImage = (image: unknown) => configDocumentSchema.safeParse({ ...validDocument, image });
+
 describe("configDocumentSchema", () => {
 	it("accepts a fully populated valid document", () => {
 		expect(configDocumentSchema.safeParse(validDocument).success).toBe(true);
@@ -61,21 +66,17 @@ describe("configDocumentSchema length limits", () => {
 	});
 
 	it("accepts a CTA label of exactly 80 characters and rejects 81", () => {
-		const cta = (label: string) => ({ ...validDocument, cta: { label, href: "/" } });
-		expect(configDocumentSchema.safeParse(cta("l".repeat(80))).success).toBe(true);
-		expect(configDocumentSchema.safeParse(cta("l".repeat(81))).success).toBe(false);
+		expect(configDocumentSchema.safeParse(withCtaLabel("l".repeat(80))).success).toBe(true);
+		expect(configDocumentSchema.safeParse(withCtaLabel("l".repeat(81))).success).toBe(false);
 	});
 
 	it("accepts alt text of exactly 250 characters and rejects 251", () => {
-		const image = (alt: string) => ({ ...validDocument, image: { ...validDocument.image, alt } });
-		expect(configDocumentSchema.safeParse(image("a".repeat(250))).success).toBe(true);
-		expect(configDocumentSchema.safeParse(image("a".repeat(251))).success).toBe(false);
+		expect(configDocumentSchema.safeParse(withAlt("a".repeat(250))).success).toBe(true);
+		expect(configDocumentSchema.safeParse(withAlt("a".repeat(251))).success).toBe(false);
 	});
 });
 
 describe("configDocumentSchema CTA rules", () => {
-	const withCta = (cta: unknown) => configDocumentSchema.safeParse({ ...validDocument, cta });
-
 	it("rejects a CTA with a label but no href", () => {
 		expect(withCta({ label: "Go home", href: "" }).success).toBe(false);
 	});
@@ -105,7 +106,6 @@ describe("configDocumentSchema CTA rules", () => {
 });
 
 describe("configDocumentSchema image rules", () => {
-	const withImage = (image: unknown) => configDocumentSchema.safeParse({ ...validDocument, image });
 	const externalImage = {
 		source: "external",
 		value: { id: "", provider: "external", src: "https://cdn.example.com/lost.png" },

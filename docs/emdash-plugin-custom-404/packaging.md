@@ -6,6 +6,7 @@ Work through this list for every release. Each step is explained in more detail 
 - [ ] `version` is bumped in `packages/emdash-plugin-custom-404/package.json`. npm versions are immutable, so every publish needs a new version, including a docs-only change: the README ships in the tarball. Use a patch bump for fixes and docs, and a minor bump for new features. The package is pre-1.0, so a breaking change is also a minor bump.
 - [ ] `PLUGIN_VERSION` in `packages/emdash-plugin-custom-404/src/constants.ts` matches the new `version`. It is the version the plugin reports to EmDash, and it isn't derived from `package.json`.
 - [ ] `peerDependencies` in the plugin's `package.json` still match the `emdash`, `@emdash-cms/admin` and `astro` versions pinned in the root `pnpm-workspace.yaml` catalog.
+- [ ] `packages/emdash-plugin-custom-404/CHANGELOG.md` has a section for the new version, dated with the release day, and a matching link reference at the bottom of the file. It ships in the tarball, so write it before publishing.
 - [ ] `packages/emdash-plugin-custom-404/README.md` covers any user-facing change. npm displays this README as the package page.
 - [ ] `pnpm test`, `pnpm lint` and `pnpm format:check` pass. Run them from the repo root.
 - [ ] The tarball preview lists only the expected files, and `catalog:` has resolved to real ranges (see [Preview the tarball](#preview-the-tarball)).
