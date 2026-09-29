@@ -65,7 +65,12 @@ markNotFound(Astro.response);
 
 	/* <figure> around the optional image. */
 	:global(.custom-404-page__image) {
-		max-width: 20rem;
+		max-width: 30rem;
+	}
+	:global(.custom-404-page__image img) {
+		display: block;
+		max-width: 100%;
+		height: auto;
 	}
 
 	/* Wrapper around the heading, paragraphs, and CTA. */
@@ -77,6 +82,7 @@ markNotFound(Astro.response);
 	:global(.custom-404-page__heading) {
 		font-size: var(--font-size-4xl);
 		color: var(--color-text);
+		padding-block: 1.6rem;
 	}
 
 	/* One <p> per body paragraph. */
