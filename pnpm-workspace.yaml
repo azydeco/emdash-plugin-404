@@ -17,20 +17,21 @@ allowBuilds:
 
 catalog:
   "@astrojs/check": ^0.9.10
+  "@emdash-cms/admin": 1.0.1
   "@astrojs/cloudflare": ^14.3.3
-  "@astrojs/react": ^6.0.6
+  "@astrojs/react": ^7.0.0
   "@cloudflare/workers-types": ^5.20260923.1
-  "@emdash-cms/cloudflare": 0.40.0
+  "@emdash-cms/cloudflare": 1.0.1
   "@types/node": ^24.13.3
-  astro: ^7.3.4
-  emdash: 0.40.0
+  astro: ^7.3.5
+  emdash: 1.0.1
   react: 19.3.0
   react-dom: 19.3.0
   hono: ^4.13.8
   tsdown: 0.23.0
   typescript: ^7.0.2
   tsx: ^4.23.15
-  vitest: ^4.1.9
+  vitest: ^5.0.2
   zod: ^4.6.5
   modern-tar: ^0.8.5
   wrangler: ^4.136.3

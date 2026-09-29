@@ -20,12 +20,12 @@
 	},
 	"devDependencies": {
 		"husky": "^9.1.7",
-		"lint-staged": "^17.5.1",
-		"oxfmt": "^0.68.0",
+		"lint-staged": "^17.6.0",
+		"oxfmt": "^0.70.0",
 		"oxlint": "^1.83.0",
-		"oxlint-tsgolint": "^7.0.2001",
+		"oxlint-tsgolint": "^7.0.2003",
 		"prettier": "^3.9.6",
-		"prettier-plugin-astro": "^1.0.0"
+		"prettier-plugin-astro": "^1.1.0"
 	},
 	"lint-staged": {
 		"*.astro": "prettier --write",
