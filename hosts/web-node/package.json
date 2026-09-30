@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "astro dev",
+		"dev:debug": "node --inspect=127.0.0.1:9230 ./node_modules/astro/bin/astro.mjs dev",
 		"build": "astro build",
 		"preview": "astro preview",
 		"start": "node ./dist/server/entry.mjs",

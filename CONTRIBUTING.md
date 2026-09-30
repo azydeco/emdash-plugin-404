@@ -104,6 +104,8 @@ Request-time code does not run in Node. The Cloudflare adapter runs `astro dev`'
 
 The compound **Test site worker + admin UI** runs the first two together.
 
+`hosts/web-node` runs on the Node adapter, so its pages and the Native plugin run in the `astro` Node process itself. Start it with `pnpm dev:debug` from `hosts/web-node`, which opens the Node inspector on `127.0.0.1:9230` (9229 belongs to the Cloudflare worker), then run **Attach: web-node dev**. (A `pnpm dev` started from a JavaScript Debug Terminal works too, with no attach.) Sandboxed plugins normally run in a workerd isolate the Node debugger can't reach, so whenever the Node inspector is open, `hosts/web-node/astro.config.mjs` loads the Listing plugin in-process from its `src/plugin.ts` instead. Breakpoints in its route handler then bind, but it runs without isolation or sandbox limits in that mode. Top-level code (the `SIGNPOST_PAGE` literal, the `plugin` object) runs once at module load, so put per-request breakpoints inside the handler.
+
 Details worth knowing:
 
 - The inspector port is pinned to 9229 in `hosts/web-cloudflare/astro.config.mjs` (`cloudflare({ inspectorPort: 9229 })`). Unpinned, the Vite plugin silently moves to the next free port and the attach connects to nothing. If 9229 is busy, free it rather than editing the pin.
