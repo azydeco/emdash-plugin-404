@@ -1,6 +1,7 @@
 import node from "@astrojs/node";
 import react from "@astrojs/react";
 import { custom404Plugin } from "@azydeco/emdash-plugin-custom-404";
+import custom404Listing from "@azydeco/emdash-plugin-custom-404-listing";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash, { local } from "emdash/astro";
 import { sqlite } from "emdash/db";
@@ -24,6 +25,10 @@ export default defineConfig({
 			}),
 			// Native plugin: must be in `plugins`, never `sandboxed`.
 			plugins: [custom404Plugin()],
+			// Listing plugin: loaded from its built `dist/` descriptor, so build it first.
+			sandboxed: [custom404Listing],
+			// Node has no Worker Loader; this runner isolates sandboxed plugins in workerd.
+			sandboxRunner: "@emdash-cms/sandbox-workerd/sandbox",
 		}),
 	],
 	fonts: [
