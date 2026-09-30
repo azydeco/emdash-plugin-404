@@ -53,7 +53,7 @@ Both use tabs. Two differences to know about:
 
 - **Plugins:** `eslint`, `typescript`, `unicorn`, `oxc`, `import`, `vitest`, `react`, `jsx-a11y`. Naming any plugin replaces oxlint's default set, so all eight are listed in `.oxlintrc.json`.
 - **Categories:** `correctness` is an error; `suspicious` and `perf` are warnings. `pnpm lint` passes `--deny-warnings`, so a warning fails the run just like an error.
-- **Type-aware rules** (`no-floating-promises`, `no-unsafe-type-assertion` and friends) come from `oxlint-tsgolint`, enabled by `typeAware: true` in the root config and `--type-aware` on the scripts. The plugin exports its `.ts` source directly, so no build is needed before linting the host that imports it.
+- **Type-aware rules** (`no-floating-promises`, `no-unsafe-type-assertion` and friends) come from `oxlint-tsgolint`, enabled by `typeAware: true` in the root config and `--type-aware` on the scripts. The Native plugin (`packages/emdash-plugin-custom-404`) exports its `.ts` source directly, so it needs no build before linting the host that imports it. The Listing plugin (`packages/emdash-plugin-custom-404-listing`) is sandboxed and exports only its built `dist/`, so build it once (`pnpm build`) after a fresh clone, before linting or running the host.
 - **`.astro` files** are linted too, but only their frontmatter and `<script>` blocks. Templates are not linted.
 
 The Oxc editor extension reads `options.typeAware` from the same config, so it runs the type-aware rules too as long as `oxlint-tsgolint` is installed. `pnpm lint` is still the check that counts: it adds `--deny-warnings`, which the editor does not.
@@ -111,7 +111,7 @@ Details worth knowing:
 - The attach fails within ten seconds if nothing is listening. That is the "start `pnpm dev` first" reminder, not a bug.
 - The Chrome config opens `http://localhost:4321`, not `127.0.0.1`: on Windows the Dev server listens on IPv6 `localhost` only. The worker attach uses `127.0.0.1:9229` explicitly, because the inspector proxy is IPv4-only on every OS. If the Dev server came up on another port because 4321 was taken, edit the URL for that session. Run only one Dev server at a time; a WSL one and a Windows one both answer on `localhost`.
 - The admin UI needs a login. Use the dev-only auth bypass route; see [Admin login](hosts/web-cloudflare/README.md#admin-login-dev-only) in the Test site README.
-- Breakpoints in the plugin's source bind because the Test site links the package with `workspace:*` and imports its `.ts` directly; the worker reports the absolute source path and an inline source map.
+- Breakpoints in the Native plugin's source bind because the Test site links the package with `workspace:*` and imports its `.ts` directly; the worker reports the absolute source path and an inline source map.
 - In the browser session, Vite serves the plugin's files (outside the host root) as `/@fs/<absolute path>`. The Chrome config maps that prefix to `/` with `pathMapping` (to `""` under the `windows` override, since Vite's prefix is followed by a drive letter there); without it, breakpoints in `src/admin/*` stay hollow (unbound). Verified on Windows and on Linux via Remote-WSL; macOS is untested but uses the Linux rule. The config's URL goes through the auth bypass first, so the debug Chrome is logged in.
 
 ## Editor
