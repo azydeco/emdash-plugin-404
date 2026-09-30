@@ -1,0 +1,26 @@
+{
+	"$schema": "./node_modules/@emdash-cms/plugin-cli/schemas/emdash-plugin.schema.json",
+
+	// Permanent: tied to the publisher on first publish and can't be changed.
+	"slug": "emdash-plugin-custom-404",
+	// PLACEHOLDER: the `azydeco` Atmosphere account doesn't exist yet. Replace
+	// with its handle or DID before the first publish.
+	"publisher": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa",
+
+	"name": "Custom 404",
+	"license": "MIT",
+	"author": { "name": "Azydeco Software Ltd", "url": "https://azydeco.com" },
+	"security": { "email": "tellmemore@azydeco.com" },
+	"repo": "https://github.com/azydeco/emdash-plugin-404",
+
+	// Trust contract. A Listing plugin does nothing but show its Signpost
+	// page, so it asks for nothing.
+	"capabilities": [],
+	"allowedHosts": [],
+	"storage": {},
+
+	// The Signpost page, rendered by the `admin` route via Block Kit.
+	"admin": {
+		"pages": [{ "path": "/about", "label": "Custom 404", "icon": "info" }],
+	},
+}
