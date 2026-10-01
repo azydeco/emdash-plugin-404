@@ -1,0 +1,1 @@
+Installing from the Registry adds an information page only; it does not change your 404 page. To get Custom 404, install the native plugin from npm — `pnpm add @azydeco/emdash-plugin-custom-404` — and register it in `plugins: []` in `astro.config.mjs`. Full setup: [README](https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404).
