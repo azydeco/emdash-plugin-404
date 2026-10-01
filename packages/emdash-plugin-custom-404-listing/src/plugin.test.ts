@@ -35,7 +35,10 @@ describe("admin route", () => {
 					elements: [
 						externalLink("npm", `https://www.npmjs.com/package/${NATIVE_PACKAGE}`),
 						externalLink("npmx", `https://npmx.dev/package/${NATIVE_PACKAGE}`),
-						externalLink("GitHub", "https://github.com/azydeco/emdash-plugin-404"),
+						externalLink(
+							"GitHub",
+							"https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404",
+						),
 					],
 				},
 			],
