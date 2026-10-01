@@ -1,9 +1,16 @@
-import type { SandboxedPlugin } from "emdash/plugin";
+import { pluginResponse, type SandboxedPlugin } from "emdash/plugin";
+
+import { SCREENSHOT_PNG_BASE64 } from "./screenshot";
 
 const NATIVE_PACKAGE = "@azydeco/emdash-plugin-custom-404";
 
 /** Must match the page `path` declared under `admin.pages` in emdash-plugin.jsonc. */
 export const SIGNPOST_PATH = "/about";
+
+/** The public route that serves the Signpost page's screenshot. */
+export const SCREENSHOT_ROUTE = "screenshot";
+
+const SCREENSHOT_PNG = Uint8Array.from(atob(SCREENSHOT_PNG_BASE64), (char) => char.charCodeAt(0));
 
 function externalLink(label: string, url: string) {
 	return {
@@ -14,7 +21,16 @@ function externalLink(label: string, url: string) {
 	} as const;
 }
 
-const SIGNPOST_PAGE = {
+/**
+ * Block Kit images must be root-relative (or on an allowed host), so the page
+ * points at the plugin's own route. The id is only known at runtime: Registry
+ * installs get an opaque `r_…` id, not the slug.
+ */
+function screenshotUrl(pluginId: string) {
+	return `/_emdash/api/plugins/${encodeURIComponent(pluginId)}/${SCREENSHOT_ROUTE}`;
+}
+
+const signpostPage = (pluginId: string) => ({
 	blocks: [
 		{ type: "header", text: "Custom 404" },
 		{
@@ -23,6 +39,13 @@ const SIGNPOST_PAGE = {
 				"Custom 404 lets editors design the site's 404 page from the EmDash admin and serves it with a real 404 status. " +
 				"This is its Registry listing: installing it from the Registry adds only this page. " +
 				"The feature itself is the native plugin, installed from npm.",
+		},
+		{
+			type: "image",
+			url: screenshotUrl(pluginId),
+			alt:
+				'A Custom 404 page as a visitor sees it: a gold logo, the heading "There might have been a page here; now it is just a 404", ' +
+				"a short message written by an editor, and a link button.",
 		},
 		{
 			type: "section",
@@ -44,7 +67,7 @@ const SIGNPOST_PAGE = {
 			],
 		},
 	],
-};
+});
 
 const NO_BLOCKS = { blocks: [] };
 
@@ -70,8 +93,22 @@ function isSignpostPageLoad(input: unknown): boolean {
 const plugin = {
 	routes: {
 		admin: {
-			handler: async ({ input }: { input: unknown }) =>
-				isSignpostPageLoad(input) ? SIGNPOST_PAGE : NO_BLOCKS,
+			handler: async ({ input }: { input: unknown }, ctx: { plugin: { id: string } }) =>
+				isSignpostPageLoad(input) ? signpostPage(ctx.plugin.id) : NO_BLOCKS,
+		},
+		// Public because an <img> can't send the X-EmDash-Request header.
+		[SCREENSHOT_ROUTE]: {
+			public: true,
+			methods: ["GET"],
+			request: { body: "none" },
+			response: "raw",
+			cacheControl: "public, max-age=3600",
+			handler: async () =>
+				pluginResponse({
+					status: 200,
+					headers: { "content-type": "image/png" },
+					body: { kind: "bytes", value: SCREENSHOT_PNG },
+				}),
 		},
 	},
 } satisfies SandboxedPlugin;

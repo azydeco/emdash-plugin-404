@@ -23,10 +23,12 @@
 		"dev": "emdash-plugin dev",
 		"typecheck": "tsc --noEmit",
 		"test": "emdash-plugin validate && vitest run",
-		"bundle": "emdash-plugin bundle"
+		"bundle": "emdash-plugin bundle",
+		"embed-screenshot": "node scripts/embed-screenshot.mjs"
 	},
 	"devDependencies": {
 		"@emdash-cms/plugin-cli": "catalog:",
+		"@types/node": "catalog:",
 		"emdash": "catalog:",
 		"typescript": "catalog:",
 		"vitest": "catalog:"
