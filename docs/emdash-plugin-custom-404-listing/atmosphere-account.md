@@ -7,6 +7,7 @@
 - [AT Protocol DIDs](https://atproto.com/specs/did) and the [PLC directory](https://web.plc.directory): the permanent account identifier that `publisher` pins.
 - [Bluesky: custom domain handles](https://bsky.social/about/blog/4-28-2023-domain-handle-tutorial): a step-by-step guide to switching a Bluesky handle to your own domain.
 - [publishing.md](../../hosts/web-node/.agents/skills/creating-plugins/references/publishing.md): the plugin CLI's publishing reference, vendored in this repo.
+- [publishing.md](publishing.md): the Listing plugin's publishing checklist, which starts from this setup.
 - [Ticket 05](../../.scratch/custom-404-listing/issues/05-first-registry-publish-and-smoke-test.md): the first Registry publish, which this setup unblocks.
 
 ## Setting up the Atmosphere account

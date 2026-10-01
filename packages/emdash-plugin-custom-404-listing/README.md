@@ -18,6 +18,12 @@ pnpm --filter @azydeco/emdash-plugin-custom-404-listing build      # writes dist
 
 The Test site lists it in `sandboxed: []` and loads the built `dist/` descriptor, so build before starting the Dev server. The root `pnpm dev` runs `emdash-plugin dev`, which rebuilds on save.
 
+## Publish
+
+The listing is published to the Registry with `emdash-plugin publish`. Follow the checklist in [docs/emdash-plugin-custom-404-listing/publishing.md](../../docs/emdash-plugin-custom-404-listing/publishing.md). [ADR 0001](docs/adr/0001-registry-presence-via-listing-plugin.md) records why this package exists.
+
+The listing's text lives in `emdash-plugin.jsonc` and `listing/*.md`; its icon is `icon.png` and its screenshot is `assets/404_plugin.png`. That PNG is also embedded in `src/screenshot.ts` for the Signpost page's image route, so run `pnpm embed-screenshot` after replacing it.
+
 ## Versioning
 
 The version in `package.json` is independent of the native plugin's and starts at 0.1.0. Bump it only when the listing or the Signpost page changes. Nothing in this package states the native plugin's version, so a native release never needs a listing release.
