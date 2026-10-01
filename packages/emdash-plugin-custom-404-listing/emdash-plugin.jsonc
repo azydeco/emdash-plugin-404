@@ -5,7 +5,7 @@
 	"slug": "emdash-plugin-custom-404",
 	// PLACEHOLDER: the `azydeco` Atmosphere account doesn't exist yet. Replace
 	// with its DID before the first publish.
-	"publisher": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa",
+	"publisher": "did:plc:nfm27pwymsd5ntjlsaz3ivli",
 
 	"name": "Custom 404",
 	// Also shown as the About text. Every piece of listing text must say the
