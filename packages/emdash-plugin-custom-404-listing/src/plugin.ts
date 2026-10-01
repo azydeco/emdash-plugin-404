@@ -33,37 +33,48 @@ function screenshotUrl(pluginId: string) {
 const signpostPage = (pluginId: string) => ({
 	blocks: [
 		{ type: "header", text: "Custom 404" },
+		// Block Kit has no width control, so two equal columns keep the text
+		// lines short: the copy on the left, the screenshot on the right.
 		{
-			type: "section",
-			text:
-				"Custom 404 lets editors design the site's 404 page from the EmDash admin and serves it with a real 404 status. " +
-				"This is its Registry listing: installing it from the Registry adds only this page. " +
-				"The feature itself is the native plugin, installed from npm.",
-		},
-		{
-			type: "image",
-			url: screenshotUrl(pluginId),
-			alt:
-				'A Custom 404 page as a visitor sees it: a gold logo, the heading "There might have been a page here; now it is just a 404", ' +
-				"a short message written by an editor, and a link button.",
-		},
-		{
-			type: "section",
-			text:
-				"Why native? Custom 404 renders public markup on your site, uses a React admin, " +
-				"and sets the response status and headers. Those need a native plugin, which the Registry can't list, " +
-				"so you install it from npm and register it in plugins: [] in astro.config.mjs.",
-		},
-		{ type: "section", text: `pnpm add ${NATIVE_PACKAGE}` },
-		{
-			type: "actions",
-			elements: [
-				externalLink("npm", `https://www.npmjs.com/package/${NATIVE_PACKAGE}`),
-				externalLink("npmx", `https://npmx.dev/package/${NATIVE_PACKAGE}`),
-				externalLink(
-					"GitHub",
-					"https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404",
-				),
+			type: "columns",
+			columns: [
+				[
+					{
+						type: "section",
+						text:
+							"Custom 404 lets editors design the site's 404 page from the EmDash admin and serves it with a real 404 status. " +
+							"This is its Registry listing: installing it from the Registry adds only this page. " +
+							"The feature itself is the native plugin, installed from npm.",
+					},
+					{
+						type: "section",
+						text:
+							"Why native? Custom 404 renders public markup on your site, uses a React admin, " +
+							"and sets the response status and headers. Those need a native plugin, which the Registry can't list, " +
+							"so you install it from npm and register it in plugins: [] in astro.config.mjs.",
+					},
+					{ type: "code", code: `pnpm add ${NATIVE_PACKAGE}`, language: "bash" },
+					{
+						type: "actions",
+						elements: [
+							externalLink("npm", `https://www.npmjs.com/package/${NATIVE_PACKAGE}`),
+							externalLink("npmx", `https://npmx.dev/package/${NATIVE_PACKAGE}`),
+							externalLink(
+								"GitHub",
+								"https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404",
+							),
+						],
+					},
+				],
+				[
+					{
+						type: "image",
+						url: screenshotUrl(pluginId),
+						alt:
+							'A Custom 404 page as a visitor sees it: a gold logo, the heading "There might have been a page here; now it is just a 404", ' +
+							"a short message written by an editor, and a link button.",
+					},
+				],
 			],
 		},
 	],

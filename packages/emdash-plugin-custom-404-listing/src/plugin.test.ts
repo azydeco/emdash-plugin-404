@@ -25,30 +25,39 @@ describe("admin route", () => {
 			blocks: [
 				{ type: "header", text: "Custom 404" },
 				{
-					type: "section",
-					text: expect.stringMatching(
-						/Registry listing.*adds only this page.*native plugin, installed from npm/s,
-					),
-				},
-				{
-					type: "image",
-					url: "/_emdash/api/plugins/r_3k9x%2Fabc/screenshot",
-					alt: expect.stringMatching(/404 page/),
-				},
-				{
-					type: "section",
-					text: expect.stringMatching(/public markup.*React admin.*status and headers/s),
-				},
-				{ type: "section", text: `pnpm add ${NATIVE_PACKAGE}` },
-				{
-					type: "actions",
-					elements: [
-						externalLink("npm", `https://www.npmjs.com/package/${NATIVE_PACKAGE}`),
-						externalLink("npmx", `https://npmx.dev/package/${NATIVE_PACKAGE}`),
-						externalLink(
-							"GitHub",
-							"https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404",
-						),
+					type: "columns",
+					columns: [
+						[
+							{
+								type: "section",
+								text: expect.stringMatching(
+									/Registry listing.*adds only this page.*native plugin, installed from npm/s,
+								),
+							},
+							{
+								type: "section",
+								text: expect.stringMatching(/public markup.*React admin.*status and headers/s),
+							},
+							{ type: "code", code: `pnpm add ${NATIVE_PACKAGE}`, language: "bash" },
+							{
+								type: "actions",
+								elements: [
+									externalLink("npm", `https://www.npmjs.com/package/${NATIVE_PACKAGE}`),
+									externalLink("npmx", `https://npmx.dev/package/${NATIVE_PACKAGE}`),
+									externalLink(
+										"GitHub",
+										"https://github.com/azydeco/emdash-plugin-404/tree/main/packages/emdash-plugin-custom-404",
+									),
+								],
+							},
+						],
+						[
+							{
+								type: "image",
+								url: "/_emdash/api/plugins/r_3k9x%2Fabc/screenshot",
+								alt: expect.stringMatching(/404 page/),
+							},
+						],
 					],
 				},
 			],
