@@ -1,0 +1,47 @@
+{
+	"$schema": "./node_modules/@emdash-cms/plugin-cli/schemas/emdash-plugin.schema.json",
+
+	// Permanent: tied to the publisher on first publish and can't be changed.
+	"slug": "emdash-plugin-custom-404",
+	// PLACEHOLDER: the `azydeco` Atmosphere account doesn't exist yet. Replace
+	// with its DID before the first publish.
+	"publisher": "did:plc:nfm27pwymsd5ntjlsaz3ivli",
+
+	"name": "Custom 404",
+	// Also shown as the About text. Every piece of listing text must say the
+	// feature comes from npm: the Registry's labeler rejects misleading claims.
+	// Never state the Native plugin's version anywhere in the listing. At most
+	// 140 graphemes.
+	"description": "Let editors design your 404 page in the EmDash admin, served with a real 404 status. Install the native plugin from npm; this links to it.",
+	"keywords": ["404", "not-found", "error-page", "seo", "native"],
+	"sections": {
+		"description": { "file": "listing/description.md" },
+		"installation": { "file": "listing/installation.md" },
+	},
+	"license": "MIT",
+	"author": { "name": "Azydeco Software Ltd", "url": "https://azydeco.com" },
+	"security": { "email": "tellmemore@azydeco.com" },
+	"repo": "https://github.com/azydeco/emdash-plugin-404",
+
+	// Trust contract. A Listing plugin does nothing but show its Signpost
+	// page, so it asks for nothing.
+	"capabilities": [],
+	"allowedHosts": [],
+	"storage": {},
+
+	// Listing media. The screenshot is also served by the `screenshot` route, so
+	// it lives in assets/: `bundle` packs screenshots/*.png itself and would
+	// pack it twice. Screenshot 2, the Native plugin's admin editor, is added
+	// before the first publish (see docs/emdash-plugin-custom-404-listing/publishing.md).
+	"release": {
+		"artifacts": {
+			"icon": { "file": "icon.png" },
+			"screenshots": [{ "file": "assets/404_plugin.png" }],
+		},
+	},
+
+	// The Signpost page, rendered by the `admin` route via Block Kit.
+	"admin": {
+		"pages": [{ "path": "/about", "label": "Custom 404", "icon": "info" }],
+	},
+}

@@ -48,8 +48,13 @@ The Test site this monorepo uses to develop and exercise `packages/emdash-plugin
 pnpm install
 cp .env.example .env
 npx emdash secrets generate  # paste the printed key into .env
+pnpm --filter @azydeco/emdash-plugin-custom-404-listing build
 pnpm dev
 ```
+
+The Listing plugin (`packages/emdash-plugin-custom-404-listing`) is sandboxed, and the site loads it from its built `dist/` descriptor, not from `.ts` source. Build it once before the first `pnpm dev`. After that, the root `pnpm dev` runs its `emdash-plugin dev` watcher alongside the site, which rebuilds `dist/` on save.
+
+Node has no Worker Loader, so the site runs sandboxed plugins through `@emdash-cms/sandbox-workerd`: Miniflare under `astro dev`, a supervised `workerd` process under `pnpm start`. Both come from the `workerd` dependency, so there is nothing extra to install.
 
 ### Admin login (dev only)
 

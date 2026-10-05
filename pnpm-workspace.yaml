@@ -22,6 +22,8 @@ catalog:
   "@astrojs/react": ^7.0.0
   "@cloudflare/workers-types": ^5.20260923.1
   "@emdash-cms/cloudflare": 1.0.1
+  "@emdash-cms/plugin-cli": 0.13.1
+  "@emdash-cms/sandbox-workerd": 0.9.1
   "@types/node": ^24.13.3
   astro: ^7.3.5
   emdash: 1.0.1

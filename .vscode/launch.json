@@ -5,10 +5,10 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			// Request-time code: host pages, worker.ts, and the plugin's routes,
-			// plugin.ts and Custom404.astro. It runs in workerd, whose DevTools
-			// inspector is pinned to 9229 in hosts/web-cloudflare/astro.config.mjs.
-			"name": "Attach to Test site worker (pnpm dev first)",
+			// Attaches to the main Worker (wrangler name "my-emdash-site") through
+			// Miniflare's inspector proxy. Breakpoints in src/**, .astro pages and
+			// src/worker.ts resolve via the inline source maps Vite emits.
+			"name": "Attach: Cloudflare Worker (my-emdash-site)",
 			"type": "node",
 			"request": "attach",
 			// The inspector proxy listens on IPv4 only (127.0.0.1:9229) on both Linux
@@ -16,10 +16,25 @@
 			"address": "127.0.0.1",
 			"port": 9229,
 			"restart": true,
-			"cwd": "${workspaceFolder}",
-			"resolveSourceMapLocations": null,
+			"continueOnAttach": true,
+			"timeout": 30000,
 			"attachExistingChildren": false,
 			"autoAttachChildProcesses": false,
+			"resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+			"skipFiles": ["<node_internals>/**"]
+		},
+		{
+			// hosts/web-node runs on the Node adapter: pages, the Native plugin and (in
+			// this mode) the Listing plugin all run in the astro process. Start it with
+			// `pnpm dev:debug` from hosts/web-node, which opens the inspector on 9230.
+			"name": "Attach: web-node dev (pnpm dev:debug first)",
+			"type": "node",
+			"request": "attach",
+			"address": "127.0.0.1",
+			"port": 9230,
+			"restart": true,
+			"timeout": 30000,
+			"resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
 			"skipFiles": ["<node_internals>/**"]
 		},
 		{
@@ -52,7 +67,7 @@
 		{
 			"name": "Test site worker + admin UI (pnpm dev first)",
 			"configurations": [
-				"Attach to Test site worker (pnpm dev first)",
+				"Attach: Cloudflare Worker (my-emdash-site)",
 				"Debug admin UI in Chrome (pnpm dev first)"
 			]
 		}

@@ -1,0 +1,39 @@
+{
+	"name": "@azydeco/emdash-plugin-custom-404-listing",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Sandboxed EmDash Registry listing for Custom 404. Adds a Signpost page that points to the native plugin on npm.",
+	"license": "MIT",
+	"files": [
+		"dist",
+		"emdash-plugin.jsonc"
+	],
+	"type": "module",
+	"main": "dist/index.mjs",
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
+		},
+		"./sandbox": "./dist/plugin.mjs"
+	},
+	"scripts": {
+		"validate": "emdash-plugin validate",
+		"build": "emdash-plugin build",
+		"dev": "emdash-plugin dev",
+		"typecheck": "tsc --noEmit",
+		"test": "emdash-plugin validate && vitest run",
+		"bundle": "emdash-plugin bundle",
+		"embed-screenshot": "node scripts/embed-screenshot.mjs"
+	},
+	"devDependencies": {
+		"@emdash-cms/plugin-cli": "catalog:",
+		"@types/node": "catalog:",
+		"emdash": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	},
+	"peerDependencies": {
+		"emdash": ">=1.0.0"
+	}
+}

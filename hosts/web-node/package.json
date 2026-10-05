@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "astro dev",
+		"dev:debug": "node --inspect=127.0.0.1:9230 ./node_modules/astro/bin/astro.mjs dev",
 		"build": "astro build",
 		"preview": "astro preview",
 		"start": "node ./dist/server/entry.mjs",
@@ -14,10 +15,13 @@
 		"@astrojs/node": "^11.1.5",
 		"@astrojs/react": "catalog:",
 		"@azydeco/emdash-plugin-custom-404": "workspace:*",
+		"@azydeco/emdash-plugin-custom-404-listing": "workspace:*",
+		"@emdash-cms/sandbox-workerd": "catalog:",
 		"astro": "catalog:",
 		"emdash": "catalog:",
 		"react": "catalog:",
-		"react-dom": "catalog:"
+		"react-dom": "catalog:",
+		"workerd": "1.20260921.1"
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.10",
