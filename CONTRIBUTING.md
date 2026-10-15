@@ -27,6 +27,8 @@ pnpm --filter web-cloudflare build
 
 There is no root `typecheck` script. The host's `typecheck` script (`astro check`) does not run under TypeScript 7, which this workspace pins: the Astro language server needs an API that TypeScript's native compiler does not expose yet (see the Astro roadmap discussion the error links to). Use `pnpm build` (or `pnpm --filter web-cloudflare build`) as the host's check until Astro catches up; the plugin's `pnpm --filter @azydeco/emdash-plugin-custom-404 typecheck` still works.
 
+`pnpm build` on a host breaks a running Dev server for that host: every route then answers 500 until the server is restarted. Build, then stop the Dev server and start it again; do not expect the running one to recover. `astro check` is not a substitute, see the previous paragraph.
+
 There is no CI yet, so these are the checks. The pre-commit hook (below) runs format and lint on staged files; run `pnpm lint` and `pnpm format:check` yourself before considering a change done, since the hook only sees what you staged.
 
 ## Two formatters
@@ -109,7 +111,8 @@ The compound **Test site worker + admin UI** runs the first two together.
 Details worth knowing:
 
 - The inspector port is pinned to 9229 in `hosts/web-cloudflare/astro.config.mjs` (`cloudflare({ inspectorPort: 9229 })`). Unpinned, the Vite plugin silently moves to the next free port and the attach connects to nothing. If 9229 is busy, free it rather than editing the pin.
-- The worker attach has `restart: true`: when you restart the Dev server (for example after `astro build` breaks it, see the [README](README.md)), the session reconnects on its own instead of dying.
+- The worker attach has `restart: true`: when you restart the Dev server (for example after `astro build` breaks it, see [Checks](#checks)), the session reconnects on its own instead of dying.
+- The workerd inspector accepts one client. While VS Code is attached, do not open a second inspector connection (another attach, Chrome DevTools on port 9229, or a tool that probes the inspector). The second client wedges the Dev server and it has to be restarted.
 - The attach fails within ten seconds if nothing is listening. That is the "start `pnpm dev` first" reminder, not a bug.
 - The Chrome config opens `http://localhost:4321`, not `127.0.0.1`: on Windows the Dev server listens on IPv6 `localhost` only. The worker attach uses `127.0.0.1:9229` explicitly, because the inspector proxy is IPv4-only on every OS. If the Dev server came up on another port because 4321 was taken, edit the URL for that session. Run only one Dev server at a time; a WSL one and a Windows one both answer on `localhost`.
 - The admin UI needs a login. Use the dev-only auth bypass route; see [Admin login](hosts/web-cloudflare/README.md#admin-login-dev-only) in the Test site README.
