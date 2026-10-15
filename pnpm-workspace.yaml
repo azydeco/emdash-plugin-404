@@ -6,7 +6,6 @@ minimumReleaseAgeExclude:
 blockExoticSubdeps: true
 
 packages:
-  - docs
   - hosts/*
   - packages/*
 

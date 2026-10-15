@@ -1,9 +1,11 @@
-# azdeco-404
+# azydeco-404
 
-A pnpm workspace with two packages:
+A pnpm workspace with four packages:
 
-- **[`hosts/web-cloudflare`](hosts/web-cloudflare/README.md)** — the Test site: an EmDash/Astro app that exists purely to exercise the plugin below. It runs locally only and is never deployed.
+- **[`hosts/web-cloudflare`](hosts/web-cloudflare/README.md)** — the Test site: an EmDash/Astro app on the Cloudflare adapter that exists purely to exercise the plugins below. It runs locally only and is never deployed.
+- **[`hosts/web-node`](hosts/web-node/README.md)** — the same Test site on the Node adapter, kept for debugging with the Node inspector (see [`CONTRIBUTING.md#debugging`](CONTRIBUTING.md#debugging)).
 - **[`packages/emdash-plugin-custom-404`](packages/emdash-plugin-custom-404/README.md)** — `@azydeco/emdash-plugin-custom-404`, the native EmDash plugin under development in this repo.
+- **[`packages/emdash-plugin-custom-404-listing`](packages/emdash-plugin-custom-404-listing/README.md)** — the sandboxed Listing plugin that represents the native plugin in the EmDash Registry.
 
 ## Requirements
 
@@ -52,6 +54,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checks workflow, the pre-c
 - Lint, format, and typecheck workflow: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Debugging the Test site and the plugin from VS Code: [`CONTRIBUTING.md#debugging`](CONTRIBUTING.md#debugging)
 - Configuring or extending the plugin itself: [`packages/emdash-plugin-custom-404/README.md`](packages/emdash-plugin-custom-404/README.md)
+- Starting a new plugin repo with this same shape: [`docs/new-plugin-repo-prompt.md`](docs/new-plugin-repo-prompt.md), a self-contained prompt for an agent in an empty directory
 
 
 Azydeco chooses the MIT license for this project to ensure that developers can feel they have access to the source code within their native Emdash deploys without a concern that they are expected to deliver access to the origins of this source within their own deploys. The freedoms of the MIT license both commercially and in terms of Source access are considered to be the best option for this project.

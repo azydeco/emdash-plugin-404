@@ -1,13 +1,12 @@
 {
-	"name": "azdeco-404-workspace",
+	"name": "azydeco-404-workspace",
 	"version": "1.0.0",
 	"private": true,
-	"description": "",
+	"description": "pnpm workspace for Azydeco EmDash plugins: the native Custom 404 plugin, its Registry Listing plugin, and the Test sites they are exercised against.",
 	"keywords": [],
-	"license": "ISC",
-	"author": "",
+	"license": "MIT",
+	"author": "Azydeco Software",
 	"type": "module",
-	"main": "index.js",
 	"scripts": {
 		"dev": "pnpm -r --if-present --parallel run dev",
 		"build": "pnpm -r --if-present run build",
