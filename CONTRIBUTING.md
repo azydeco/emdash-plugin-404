@@ -87,6 +87,27 @@ The hook is installed by `pnpm install` (the root `prepare` script runs `husky`)
 
 Never pass an argument to `husky`. It treats its first argument as the hooks directory, so `husky --version` silently points `core.hooksPath` at a `--version/_` directory and every commit then fails with `sh: 0: Illegal option --`. `pnpm exec husky` with no arguments puts it back.
 
+## Releasing
+
+The two plugins are versioned and released separately. Each has a full release checklist: [packaging.md](docs/emdash-plugin-custom-404/packaging.md) for the Native plugin (npm) and [publishing.md](docs/emdash-plugin-custom-404-listing/publishing.md) for the Listing plugin (EmDash Registry). These are the files a release touches.
+
+**Native plugin** (`packages/emdash-plugin-custom-404`):
+
+| File                       | What to update                                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `package.json`             | Bump `version`. Check that `peerDependencies` still match the `emdash`, `@emdash-cms/admin` and `astro` catalog versions in `pnpm-workspace.yaml`. |
+| `src/constants.ts`         | Set `PLUGIN_VERSION` to the new version. It is what the plugin reports to EmDash, and it isn't read from `package.json`. `pnpm test` fails if the two differ. |
+| `CHANGELOG.md`             | Add a `## [x.y.z] - YYYY-MM-DD` section, and its link reference at the bottom of the file. It ships in the tarball. |
+| `README.md`                | Cover any user-facing change. npm shows it as the package page.                                                    |
+
+**Listing plugin** (`packages/emdash-plugin-custom-404-listing`). Release it only when the listing or the Signpost page changes, not for a Native plugin release (see [When to release](docs/emdash-plugin-custom-404-listing/publishing.md#when-to-release)):
+
+| File                                    | What to update                                                                                  |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `package.json`                          | Bump `version`.                                                                                 |
+| `emdash-plugin.jsonc`, `listing/*.md`   | Any listing text change. Never state the Native plugin's version.                               |
+| `assets/404_plugin.png`, `src/screenshot.ts` | After replacing the screenshot, run `pnpm embed-screenshot` to regenerate `src/screenshot.ts`. |
+
 ## Debugging
 
 `.vscode/launch.json` holds the debug configurations. They **attach** to a Dev server you have already started; nothing in VS Code starts one, because the Dev server is normally left running between edits and a second process would fight the first for ports and the Vite cache. Start it first:
