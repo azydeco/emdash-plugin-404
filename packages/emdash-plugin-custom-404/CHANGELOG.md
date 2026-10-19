@@ -4,6 +4,12 @@ All notable changes to `@azydeco/emdash-plugin-custom-404` are recorded here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the package uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html). While it is pre-1.0, a breaking change is a minor bump.
 
+## [0.2.2] - 2026-10-19
+
+### Changed
+
+- Built and tested against EmDash 1.3.1 (previously 1.0.1). The peer dependency floors are unchanged at `>=1.0.0`, and there are no changes to the plugin's behaviour.
+
 ## [0.2.1] - 2026-09-29
 
 ### Fixed
@@ -37,6 +43,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Server-side verification of external image URLs at save time (`https:` only, `image/*` content type).
 - `Custom404` Astro component and `markNotFound` helper, exported from `@azydeco/emdash-plugin-custom-404/astro`.
 
+[0.2.2]: https://www.npmjs.com/package/@azydeco/emdash-plugin-custom-404/v/0.2.2
 [0.2.1]: https://www.npmjs.com/package/@azydeco/emdash-plugin-custom-404/v/0.2.1
 [0.2.0]: https://www.npmjs.com/package/@azydeco/emdash-plugin-custom-404/v/0.2.0
 [0.1.1]: https://www.npmjs.com/package/@azydeco/emdash-plugin-custom-404/v/0.1.1
