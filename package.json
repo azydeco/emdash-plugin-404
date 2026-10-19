@@ -21,9 +21,9 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^17.6.0",
 		"oxfmt": "^0.70.0",
-		"oxlint": "^1.83.0",
-		"oxlint-tsgolint": "^7.0.2003",
-		"prettier": "^3.9.6",
+		"oxlint": "^1.88.0",
+		"oxlint-tsgolint": "^7.0.2004",
+		"prettier": "^3.9.10",
 		"prettier-plugin-astro": "^1.1.0"
 	},
 	"lint-staged": {
