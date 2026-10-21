@@ -19,7 +19,10 @@ describe("custom404Plugin descriptor", () => {
 	});
 
 	it("keeps its version in step with package.json", () => {
-		expect(descriptor.version).toBe(packageJson.version);
+		expect(
+			descriptor.version,
+			`PLUGIN_VERSION in src/constants.ts must match "version" in package.json (${packageJson.version})`,
+		).toBe(packageJson.version);
 	});
 
 	it("points adminEntry and componentsEntry at exports the package actually has", () => {

@@ -8,8 +8,9 @@ Work through this list for every release. Each step is explained in more detail 
 - [ ] `peerDependencies` in the plugin's `package.json` still match the `emdash`, `@emdash-cms/admin` and `astro` versions pinned in the root `pnpm-workspace.yaml` catalog.
 - [ ] `packages/emdash-plugin-custom-404/CHANGELOG.md` has a section for the new version, dated with the release day, and a matching link reference at the bottom of the file. It ships in the tarball, so write it before publishing.
 - [ ] `packages/emdash-plugin-custom-404/README.md` covers any user-facing change. npm displays this README as the package page.
-- [ ] `pnpm test`, `pnpm lint` and `pnpm format:check` pass. Run them from the repo root.
-- [ ] The tarball preview lists only the expected files, and `catalog:` has resolved to real ranges (see [Preview the tarball](#preview-the-tarball)).
+- [ ] `pnpm test`, `pnpm lint` and `pnpm format:check` pass. Run them from the repo root. CI checks this on the release PR.
+- [ ] The tarball preview lists only the expected files, and `catalog:` has resolved to real ranges (see [Preview the tarball](#preview-the-tarball)). CI checks this on the release PR, along with the peer ranges and the CHANGELOG section.
+- [ ] The merge commit on `main` is tagged `vX.Y.Z` (the new version), the tag is pushed, and its CI run is green (see [Release tag](#release-tag)).
 - [ ] `pnpm whoami` prints your npm username. `pnpm publish --dry-run` never contacts the registry, so it can't catch a missing or expired login.
 - [ ] Published with `pnpm publish` (see [Publish](#publish)).
 
@@ -21,7 +22,7 @@ Unless a step says otherwise, **run every command in this guide from the plugin 
 cd packages/emdash-plugin-custom-404   # starting from the repo root
 ```
 
-`pnpm pack` and `pnpm publish` act on the package in the current directory. From the repo root, they would pack the private workspace root (`azdeco-404-workspace`) instead of the plugin. If you'd rather stay in the repo root, give each command the package directory with `-C`:
+`pnpm pack` and `pnpm publish` act on the package in the current directory. From the repo root, they would pack the private workspace root (`azydeco-404-workspace`) instead of the plugin. If you'd rather stay in the repo root, give each command the package directory with `-C`:
 
 ```bash
 pnpm -C packages/emdash-plugin-custom-404 pack --dry-run
@@ -58,6 +59,15 @@ Always preview the tarball before publishing. This step never touches the regist
 pnpm pack --dry-run
 ```
 
+`pnpm check:package` (also run from `packages/emdash-plugin-custom-404`, and by CI on every PR) packs the real tarball into a temp directory and checks it. It fails if:
+
+- `package.json`, `README.md`, `CHANGELOG.md` or `LICENCE` is missing, or a test-only file (`*.test.ts`, `test-support.ts`, `src/astro/tsconfig.json`) is included.
+- Any dependency in the packed `package.json` is still `catalog:` or `workspace:`.
+- A catalog version the plugin is tested against (its packed `devDependencies`) falls outside the matching `peerDependencies` range.
+- `CHANGELOG.md` has no `## [x.y.z] - YYYY-MM-DD` section or `[x.y.z]:` link reference for the current version.
+
+It prints where it wrote the `.tgz`; nothing is written into the repo.
+
 Packing turns the `catalog:` version specifiers (such as `zod`) into real semver ranges in the packed `package.json`. It also applies the `"files"` allowlist from `package.json`. That allowlist ships raw `src/` with no build step, as the native-plugin guide requires. It excludes `*.test.ts`, `test-support.ts` (the test-only fake KV and fetch helpers) and `src/astro/tsconfig.json`.
 
 If you add files later, note that a `.npmignore` has no effect here, whether you put it in the package root or inside `src/`. When `"files"` is set, pnpm ignores `.npmignore` completely. A `.npmignore` placed inside `src/` would itself be shipped. (This was checked with pnpm 12. The npm CLI behaves differently for nested `.npmignore` files, so don't rely on them.) To exclude a new non-runtime file, add a negated glob to `"files"`, for example `"!src/**/*.test.ts"`.
@@ -82,6 +92,20 @@ By default, `pnpm publish` fails with `ERR_PNPM_GIT_NOT_CORRECT_BRANCH` unless a
 - The branch is in sync with its remote.
 
 Publish from an up-to-date `main` after the release PR is merged. `--no-git-checks` skips these checks, but only use it deliberately, for example for a pre-release published under `--tag next`.
+
+### Release tag
+
+A bare `vX.Y.Z` tag always means a Native plugin release. If the Listing plugin is ever tagged, give its tags a prefix (for example `listing-v0.1.0`) so they don't collide.
+
+Once the release PR is merged, tag the merge commit and push the tag:
+
+```bash
+git switch main && git pull
+git tag v0.2.3          # the new version
+git push origin v0.2.3
+```
+
+The tag triggers a CI run with three extra checks before the usual ones. The tag must equal `version` in `package.json`, the tagged commit must be on `main`, and that version must not already be on npm. Wait for the run to go green before publishing. CI never publishes; a red run means fix it, delete the tag (`git push origin :refs/tags/v0.2.3`), and tag again.
 
 ### Publish
 

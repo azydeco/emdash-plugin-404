@@ -31,14 +31,16 @@
 		"access": "public"
 	},
 	"scripts": {
-		"typecheck": "tsc --noEmit",
-		"test": "vitest run"
+		"typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
+		"test": "vitest run",
+		"check:package": "node scripts/check-package.ts"
 	},
 	"dependencies": {
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@emdash-cms/admin": "catalog:",
+		"@types/node": "catalog:",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"astro": "catalog:",

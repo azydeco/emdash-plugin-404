@@ -25,11 +25,13 @@ pnpm --filter @azydeco/emdash-plugin-custom-404 test
 pnpm --filter web-cloudflare build
 ```
 
-There is no root `typecheck` script. The host's `typecheck` script (`astro check`) does not run under TypeScript 7, which this workspace pins: the Astro language server needs an API that TypeScript's native compiler does not expose yet (see the Astro roadmap discussion the error links to). Use `pnpm build` (or `pnpm --filter web-cloudflare build`) as the host's check until Astro catches up; the plugin's `pnpm --filter @azydeco/emdash-plugin-custom-404 typecheck` still works.
+There is no root `typecheck` script. The host's `typecheck` script (`astro check`) does not run under TypeScript 7, which this workspace pins: the Astro language server needs an API that TypeScript's native compiler does not expose yet (see the Astro roadmap discussion the error links to). Use `pnpm build` (or `pnpm --filter web-cloudflare build`) as the host's check until Astro catches up; the plugin's `pnpm --filter @azydeco/emdash-plugin-custom-404 typecheck` still works. It checks `src/` and, against their own Node tsconfig, the `.ts` scripts in `scripts/`, which Node runs directly by stripping their types.
 
 `pnpm build` on a host breaks a running Dev server for that host: every route then answers 500 until the server is restarted. Build, then stop the Dev server and start it again; do not expect the running one to recover. `astro check` is not a substitute, see the previous paragraph.
 
-There is no CI yet, so these are the checks. The pre-commit hook (below) runs format and lint on staged files; run `pnpm lint` and `pnpm format:check` yourself before considering a change done, since the hook only sees what you staged.
+CI (`.github/workflows/ci.yml`) runs these checks on every PR into `main`, every push to `main`, every `vX.Y.Z` tag, and on demand from the Actions tab. In order: `pnpm install --frozen-lockfile`, `pnpm format:check`, `pnpm build` (before lint, see [Linting](#linting)), `pnpm lint`, `pnpm test`, the Native plugin's `typecheck`, and its packaging dry run (`pnpm check:package`, see [packaging.md](docs/emdash-plugin-custom-404/packaging.md#preview-the-tarball)). The packed `.tgz` is attached to the run as the `custom-404-tarball` artifact. Node comes from `.node-version` and pnpm from `devEngines` in the root `package.json`.
+
+The pre-commit hook (below) runs format and lint on staged files; run `pnpm lint` and `pnpm format:check` yourself before considering a change done, since the hook only sees what you staged and CI only sees what you pushed.
 
 ## Two formatters
 
@@ -155,5 +157,7 @@ Details worth knowing:
 | `.husky/pre-commit`     | Runs lint-staged                                                      |
 | `.vscode/settings.json` | Formatter and code-action wiring for the two extensions               |
 | `.vscode/launch.json`   | Debug configurations: worker attach, admin UI in Chrome, and their compound |
+| `.github/workflows/ci.yml` | CI: the checks above, the packaging dry run, and the release tag checks |
+| `.node-version`         | Node major version for CI and version managers                        |
 
 The lint and format ignore lists are kept identical, except that the linter also ignores every `.d.ts`.
