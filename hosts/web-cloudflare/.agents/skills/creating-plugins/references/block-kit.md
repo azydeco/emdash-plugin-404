@@ -406,19 +406,21 @@ Use `tab` to group related blocks into labelled panels:
 
 ## Repeater and media picker elements
 
-`repeater` and `media_picker` are admin-authoring elements, not ordinary fields in a sandboxed admin-page `form`.
+`repeater` is an authoring element for native plugin Portable Text block forms. `media_picker` works there and in [declarative field widgets](#declarative-field-widgets). Neither is an ordinary field in a sandboxed admin-page `form`.
 
-`repeater` captures an array of objects. Its nested fields are limited to `text_input`, `number_input`, `select`, and `toggle`:
+`repeater` captures an array of objects. Its nested fields support `text_input`, `number_input`, `select`, `toggle`, and `media_picker`.
+
+The following repeater captures images and captions. Each `image` value is the selected asset's URL string:
 
 ```typescript
 {
 	"type": "repeater",
-	"action_id": "items",
-	"label": "Questions",
-	"item_label": "Question",
+	"action_id": "slides",
+	"label": "Slides",
+	"item_label": "Slide",
 	"fields": [
-		{ "type": "text_input", "action_id": "question", "label": "Question" },
-		{ "type": "text_input", "action_id": "answer", "label": "Answer", "multiline": true }
+		{ "type": "media_picker", "action_id": "image", "label": "Image", "mime_type_filter": "image/" },
+		{ "type": "text_input", "action_id": "caption", "label": "Caption" }
 	]
 }
 ```
@@ -433,6 +435,32 @@ Use `tab` to group related blocks into labelled panels:
 	"mime_type_filter": "image/"
 }
 ```
+
+## Dynamic select options (`optionsRoute`)
+
+A `select` in a Portable Text block's `fields` can set `optionsRoute` to fill its dropdown from one of the plugin's own routes. It also works for a `select` nested in a `repeater` in those fields.
+
+```typescript
+// storage
+cards: { indexes: ["title"] },
+
+// routes
+"cards/list": {
+	handler: async (ctx) => {
+		const result = await ctx.storage.cards.query({ limit: 100 });
+		return { items: result.items.map((card) => ({ id: card.id, name: card.data.title })) };
+	},
+},
+
+// admin.portableTextBlocks[].fields
+{ type: "select", action_id: "cardId", label: "Card", options: [], optionsRoute: "cards/list" }
+```
+
+- Each `select` with `optionsRoute` calls `POST /_emdash/api/plugins/<pluginId>/<optionsRoute>` when it renders, so every field instance and repeater item sends its own request. The request has `X-EmDash-Request: 1` and a `{}` body.
+- It is an ordinary plugin route: it needs `plugins:manage` unless the route declares another `permission`.
+- The handler returns `{ items: Array<{ id: string; name: string }> }`. The route responds with the standard EmDash envelope (`{ success: true, data: { items: [...] } }`), and the editor reads `data.items`. `id` becomes the stored value and `name` the label. Other item properties are ignored.
+- The field shows a loading state while the request runs. A failed request, a non-OK response, or a response without an `items` array falls back to the static `options`.
+- `optionsRoute` only takes effect in the Portable Text block editor. Admin pages, widgets, saved-entry panels, and declarative field widgets ignore it and read only the static `options`. Block Kit responses must give a `select` at least one static option.
 
 ## Declarative field widgets
 

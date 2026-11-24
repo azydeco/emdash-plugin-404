@@ -42,14 +42,15 @@ Collections define content types. Each collection becomes a database table (`ec_
 
 ### Collection Supports
 
-| Support      | Description               |
-| ------------ | ------------------------- |
-| `drafts`     | Draft/published workflow  |
-| `revisions`  | Revision history          |
-| `preview`    | Signed draft previews     |
-| `scheduling` | Scheduled publication     |
-| `search`     | Full-text search indexing |
-| `seo`        | SEO meta fields in admin  |
+| Support         | Description                                                                           |
+| --------------- | ------------------------------------------------------------------------------------- |
+| `drafts`        | Draft/published workflow                                                              |
+| `revisions`     | Revision history                                                                      |
+| `preview`       | Signed draft previews                                                                 |
+| `no-scheduling` | Disables creating or changing publication schedules; scheduling is enabled by default |
+| `scheduling`    | Deprecated no-op, accepted for compatibility                                          |
+| `search`        | Full-text search indexing                                                             |
+| `seo`           | SEO meta fields in admin                                                              |
 
 ### Slug Rules
 
@@ -93,7 +94,7 @@ Collections define content types. Each collection becomes a database table (`ec_
 
 Fields can have:
 
-- `slug` (required) -- field identifier
+- `slug` (required) -- field identifier; cannot use a system field name such as `published_at`. See the [reserved field slugs](https://docs.emdashcms.com/reference/field-types/#reserved-field-slugs) for the full list.
 - `label` (required) -- display label in admin
 - `type` (required) -- one of the types above
 - `required` -- validation
